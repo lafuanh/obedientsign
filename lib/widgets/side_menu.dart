@@ -1,3 +1,4 @@
+import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 
 class SideMenu extends StatelessWidget {
@@ -10,6 +11,9 @@ class SideMenu extends StatelessWidget {
       width: 50,
       color: Colors.black.withOpacity(0.5),
       child: Column(children: [
+        WindowTitleBarBox(
+          child: MoveWindow(),
+        ),
         SidemenuIc(
           srcImage: "assets/ic_Home.png",
           onTap: () {},
@@ -45,18 +49,19 @@ class SidemenuIc extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-        // ignore: sort_child_properties_last
-        child: Container(
-          alignment: Alignment.center,
-          padding: const EdgeInsets.symmetric(horizontal: 5),
-          width: 50,
-          height: 40,
-          child: Image(
-            width: 20,
-            height: 20,
-            image: AssetImage(srcImage),
-          ),
+      // ignore: sort_child_properties_last
+      child: Container(
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        width: 50,
+        height: 40,
+        child: Image(
+          width: 20,
+          height: 20,
+          image: AssetImage(srcImage),
         ),
-        onTap: onTap);
+      ),
+      onTap: onTap,
+    );
   }
 }

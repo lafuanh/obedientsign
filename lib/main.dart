@@ -1,20 +1,18 @@
-import 'dart:io';
-
+import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
-// import 'package:signtome/screens/home_screen.dart';
-import 'package:window_size/window_size.dart';
+import 'package:signtome/screens/home_screen.dart';
 
 import 'widgets/side_menu.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-    setWindowTitle('My App');
-    setWindowMinSize(const Size(600, 250));
-    setWindowMaxSize(const Size(600, 250));
-  }
   runApp(const MyApp());
+
+  doWhenWindowReady(() {
+    var intialSize = const Size(600, 250);
+    appWindow.size = intialSize;
+    appWindow.minSize = intialSize;
+    appWindow.maxSize = intialSize;
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -25,6 +23,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        backgroundColor: Colors.black,
         brightness: Brightness.dark,
         appBarTheme: const AppBarTheme(backgroundColor: Colors.black),
         primaryColor: Colors.black,
@@ -40,16 +39,24 @@ class Shell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Column(
-      children: [
-        Expanded(
-            child: Row(
-          children: const [
-            SideMenu(),
-            // HomeScreen(),
-          ],
-        ))
-      ],
-    ));
+      // appBar: AppBar(
+      //   toolbarHeight: 10,
+      //   backgroundColor: Colors.green,
+      //   elevation: 0,
+      //   leading: Row(children: [
+      //     MinimizeWindowButton(colors: butttonColors),
+      //     MaximizeWindowButton(colors: butttonColors),
+      //     CloseWindowButton(colors: butttonColors),
+      //   ]),
+      // ),
+      body: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SideMenu(),
+          HomeScreen(),
+        ],
+      ),
+    );
   }
 }
