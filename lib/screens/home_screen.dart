@@ -1,7 +1,8 @@
-import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:timer_builder/timer_builder.dart';
+
+import '../widgets/bar_window.dart';
 
 // import '../widgets/live_clock.dart';
 
@@ -12,16 +13,6 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-var butttonColors = WindowButtonColors(
-  iconNormal: Colors.white,
-  mouseOver: Colors.white.withOpacity(0.1),
-  mouseDown: Colors.white.withOpacity(0.2),
-  iconMouseDown: Colors.white,
-  iconMouseOver: Colors.white,
-);
-
-//
-
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
@@ -30,22 +21,8 @@ class _HomeScreenState extends State<HomeScreen> {
         color: Color(0xFF1E1E26),
         child: Column(
           children: [
-            WindowTitleBarBox(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: MoveWindow(),
-                  ),
-                  Row(
-                    children: [
-                      MinimizeWindowButton(colors: butttonColors),
-                      CloseWindowButton(colors: butttonColors),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            // LiveClock(),
+            const WindowButton(), //Costume appBar
+
             const Padding(padding: EdgeInsets.symmetric(vertical: 10.0)),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -149,31 +126,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             )
-
-            // Container(
-            //   width: 200,
-            //   color: Colors.black,
-            //   alignment: Alignment.center,
-            //   child: Row(
-            //     children: [
-            //       Container(
-            //         width: 50,
-            //         height: 150,
-            //         color: Colors.amber,
-            //       ),
-            //       Container(
-            //         width: 50,
-            //         height: 50,
-            //         color: Colors.blue,
-            //       ),
-            //       Container(
-            //         width: 50,
-            //         height: 50,
-            //         color: Colors.green,
-            //       ),
-            //     ],
-            //   ),
-            // )
           ],
         ),
       ),

@@ -2,6 +2,8 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:signtome/screens/home_screen.dart';
 
+import 'screens/schedule_screen.dart';
+import 'screens/setting_screen.dart';
 import 'widgets/side_menu.dart';
 
 void main() {
@@ -54,7 +56,9 @@ class Shell extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SideMenu(),
-          HomeScreen(),
+          // HomeScreen(),
+          // SchecduleScreen(),
+          SettingScreen(),
         ],
       ),
     );
