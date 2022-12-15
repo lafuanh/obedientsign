@@ -20,7 +20,21 @@ class WindowButton extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: MoveWindow(),
+            child: MoveWindow(
+                // child: Row(
+                //   children: [
+                //     //change title please
+                //     Padding(
+                //       padding: EdgeInsets.only(left: 16.0, top: 8),
+                //       child: Text(
+                //         "Settings",
+                //         style:
+                //             TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                ),
           ),
           Row(
             children: [

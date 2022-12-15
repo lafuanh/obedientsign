@@ -1,5 +1,6 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
+import 'package:signtome/screens/schedule_screen.dart';
 
 class SideMenu extends StatelessWidget {
   const SideMenu({super.key});
@@ -20,7 +21,11 @@ class SideMenu extends StatelessWidget {
         ),
         SidemenuIc(
           srcImage: "assets/ic_Clock.png",
-          onTap: () {},
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+              return SchecduleScreen();
+            }));
+          },
         ),
         SidemenuIc(
           srcImage: "assets/ic_Settings.png",
