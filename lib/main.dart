@@ -1,5 +1,6 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
+import 'package:signtome/screens/about_screen.dart';
 import 'package:signtome/screens/home_screen.dart';
 
 import 'screens/schedule_screen.dart';
@@ -47,16 +48,6 @@ class _ShellState extends State<Shell> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   toolbarHeight: 10,
-      //   backgroundColor: Colors.green,
-      //   elevation: 0,
-      //   leading: Row(children: [
-      //     MinimizeWindowButton(colors: butttonColors),
-      //     MaximizeWindowButton(colors: butttonColors),
-      //     CloseWindowButton(colors: butttonColors),
-      //   ]),
-      // ),
       body: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,16 +89,13 @@ class _ShellState extends State<Shell> {
                 srcImage: "assets/ic_About.png",
                 onTap: () {
                   setState(() {
-                    pageNumber = 1;
+                    pageNumber = 4;
                   });
                 },
               ),
             ]),
           ),
           getWidget(),
-          // HomeScreen(),
-          // SchecduleScreen(),
-          // SettingScreen(),
         ],
       ),
     );
@@ -120,6 +108,8 @@ class _ShellState extends State<Shell> {
       return SchecduleScreen();
     } else if (pageNumber == 3) {
       return SettingScreen();
+    } else if (pageNumber == 4) {
+      return Aboutme();
     }
   }
 }
