@@ -61,7 +61,8 @@ class _ShellState extends State<Shell> {
                 child: MoveWindow(),
               ),
               SidemenuIc(
-                srcImage: "assets/ic_Home.png",
+                srcImage: changeIconColor(1, "assets/sidemenu/ic_Home_w.png",
+                    "assets/sidemenu/ic_Home_g.png"),
                 onTap: () {
                   setState(() {
                     pageNumber = 1;
@@ -69,7 +70,8 @@ class _ShellState extends State<Shell> {
                 },
               ),
               SidemenuIc(
-                srcImage: "assets/ic_Clock.png",
+                srcImage: changeIconColor(2, "assets/sidemenu/ic_Clock_w.png",
+                    "assets/sidemenu/ic_Clock_g.png"),
                 onTap: () {
                   setState(() {
                     pageNumber = 2;
@@ -77,7 +79,10 @@ class _ShellState extends State<Shell> {
                 },
               ),
               SidemenuIc(
-                srcImage: "assets/ic_Settings.png",
+                srcImage: changeIconColor(
+                    3,
+                    "assets/sidemenu/ic_Settings_w.png",
+                    "assets/sidemenu/ic_Settings_g.png"),
                 onTap: () {
                   setState(() {
                     pageNumber = 3;
@@ -86,7 +91,8 @@ class _ShellState extends State<Shell> {
               ),
               Expanded(child: Container(height: 50)),
               SidemenuIc(
-                srcImage: "assets/ic_About.png",
+                srcImage: changeIconColor(4, "assets/sidemenu/ic_About_w.png",
+                    "assets/sidemenu/ic_About_g.png"),
                 onTap: () {
                   setState(() {
                     pageNumber = 4;
@@ -111,6 +117,14 @@ class _ShellState extends State<Shell> {
     } else if (pageNumber == 4) {
       return Aboutme();
     }
+  }
+}
+
+changeIconColor(int nPage, String imageW, String imageG) {
+  if (pageNumber == nPage) {
+    return imageW;
+  } else {
+    return imageG;
   }
 }
 
