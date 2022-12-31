@@ -39,7 +39,34 @@ class WindowButton extends StatelessWidget {
           Row(
             children: [
               MinimizeWindowButton(colors: butttonColors),
-              CloseWindowButton(colors: butttonColors),
+              CloseWindowButton(
+                colors: butttonColors,
+                onPressed: () {
+                  showDialog<void>(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        backgroundColor: Colors.black.withOpacity(0.5),
+                        title: const Text('Exit Program?',
+                            style: TextStyle(color: Colors.grey)),
+                        content: const Text(
+                            ('The window will be hidden, to exit the program you can use the system menu.'),
+                            style: TextStyle(color: Colors.grey)),
+                        actions: <Widget>[
+                          TextButton(
+                            child: const Text('OK'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              appWindow.hide();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
             ],
           ),
         ],

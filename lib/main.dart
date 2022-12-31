@@ -1,20 +1,42 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide MenuItem;
 import 'package:signtome/screens/about_screen.dart';
 import 'package:signtome/screens/home_screen.dart';
+import 'package:system_tray/system_tray.dart';
 
 import 'screens/schedule_screen.dart';
 import 'screens/setting_screen.dart';
 
+/*
+Note:
+Please edit : Change
+todo: 1. App Icon still flutter
+
+home its not work if u change page, maybe u should make own timeBuilder in this home
+
+*/
 void main() {
   runApp(const MyApp());
 
   doWhenWindowReady(() {
     var intialSize = const Size(600, 250);
+
     appWindow.size = intialSize;
     appWindow.minSize = intialSize;
     appWindow.maxSize = intialSize;
+    appWindow.show();
   });
+}
+
+String getTrayImagePath(String imageName) {
+  return Platform.isWindows ? 'assets/$imageName.ico' : 'assets/$imageName.png';
+}
+
+String getImagePath(String imageName) {
+  return Platform.isWindows ? 'assets/$imageName.bmp' : 'assets/$imageName.png';
 }
 
 class MyApp extends StatelessWidget {
@@ -45,6 +67,69 @@ class Shell extends StatefulWidget {
 }
 
 class _ShellState extends State<Shell> {
+  final AppWindow _appWindow = AppWindow();
+  final SystemTray _systemTray = SystemTray();
+  final Menu _menuMain = Menu();
+
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    initSystemTray();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _timer?.cancel();
+  }
+
+  Future<void> initSystemTray() async {
+    // We first init the systray menu and then add the menu entries
+    await _systemTray.initSystemTray(iconPath: getTrayImagePath('mosqueW'));
+    _systemTray.setTitle("Adzan Time");
+    _systemTray.setToolTip("Jadwal Adzan"); // Change : "Jadwal Adzan - dhuhur"
+
+    // handle system tray event
+    _systemTray.registerSystemTrayEventHandler((eventName) {
+      // debugPrint("eventName: $eventName");
+      if (eventName == kSystemTrayEventClick) {
+        Platform.isWindows ? _appWindow.show() : _systemTray.popUpContextMenu();
+      } else if (eventName == kSystemTrayEventRightClick) {
+        Platform.isWindows ? _systemTray.popUpContextMenu() : _appWindow.show();
+      }
+    });
+
+    await _menuMain.buildFrom(
+      [
+        MenuItemLabel(
+          label: '09 Muharamm tanngal', // Change : "Tanggal Terkini"
+          onClicked: (menuItem) async {
+            setState(() {
+              pageNumber = 1;
+            });
+            appWindow.show();
+          },
+        ),
+        MenuItemLabel(
+          label: 'Jadwal Sholat', // Change : "dhuhur - 12:34"
+          onClicked: (menuItem) async {
+            setState(() {
+              pageNumber = 2;
+            });
+            appWindow.show();
+          },
+        ),
+        MenuSeparator(),
+        MenuItemLabel(
+            label: 'Exit', onClicked: (menuItem) => _appWindow.close()),
+      ],
+    );
+
+    _systemTray.setContextMenu(_menuMain);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
