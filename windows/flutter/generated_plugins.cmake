@@ -4,8 +4,11 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   bitsdojo_window_windows
-  sqlite3_flutter_libs
+  local_notifier
+  screen_retriever
   system_tray
+  tray_manager
+  window_manager
   window_size
 )
 

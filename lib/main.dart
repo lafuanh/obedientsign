@@ -3,12 +3,19 @@ import 'dart:io';
 
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart' hide MenuItem;
+
+import 'package:timer_builder/timer_builder.dart';
+import 'package:intl/intl.dart';
+
+import 'package:system_tray/system_tray.dart';
+import 'package:bot_toast/bot_toast.dart';
+import 'package:local_notifier/local_notifier.dart';
+
 import 'package:signtome/screens/about_screen.dart';
 import 'package:signtome/screens/home_screen.dart';
-import 'package:system_tray/system_tray.dart';
-
 import 'screens/schedule_screen.dart';
 import 'screens/setting_screen.dart';
+import 'service/notifex.dart';
 
 /*
 Note:
@@ -18,17 +25,25 @@ todo: 1. App Icon still flutter
 home its not work if u change page, maybe u should make own timeBuilder in this home
 
 */
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await localNotifier.setup(
+    appName: 'Adzan', //name Notif
+    shortcutPolicy: ShortcutPolicy.requireCreate,
+  );
+
   runApp(const MyApp());
 
   doWhenWindowReady(() {
-    var intialSize = const Size(600, 250);
+    var intialSize = const Size(600, 250); //change window
 
     appWindow.size = intialSize;
     appWindow.minSize = intialSize;
     appWindow.maxSize = intialSize;
     appWindow.show();
   });
+
+  // await windowManager.ensureInitialized();
 }
 
 String getTrayImagePath(String imageName) {
@@ -137,6 +152,36 @@ class _ShellState extends State<Shell> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          TimerBuilder.periodic(const Duration(seconds: 1), builder: (context) {
+            var now = DateTime.now();
+            var formatTime = DateFormat.Hm().format(now);
+            var formatSec = DateFormat('s').format(now);
+            var formatedDay = DateFormat('EEEEE', 'en_US').format(now);
+
+            //show notification
+            if (int.parse(formatSec) == 1) {
+              notifAdzanDhuhur?.show();
+            }
+
+            return Column(
+
+                // children: [
+                //   Center(
+                //     child: Text(
+                //       formatTime + ':' + formatSec,
+                //       style: TextStyle(
+                //         color: Colors.white.withOpacity(0.8),
+                //         fontSize: 40,
+                //         fontWeight: FontWeight.normal,
+                //       ),
+                //     ),
+                //   ),
+                //   Center(
+                //     child: Text(formatedDay),
+                //   )
+                // ],
+                );
+          }),
           Container(
             height: double.infinity,
             width: 50,
@@ -200,6 +245,7 @@ class _ShellState extends State<Shell> {
     } else if (pageNumber == 3) {
       return SettingScreen();
     } else if (pageNumber == 4) {
+      //change to : aboutme()
       return Aboutme();
     }
   }
