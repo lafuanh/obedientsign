@@ -1,8 +1,14 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart' hide MenuItem;
+
+import 'package:flutter/services.dart';
+import 'package:signtome/service/cities.dart';
 
 import 'package:timer_builder/timer_builder.dart';
 import 'package:intl/intl.dart';
@@ -13,9 +19,14 @@ import 'package:local_notifier/local_notifier.dart';
 
 import 'package:signtome/screens/about_screen.dart';
 import 'package:signtome/screens/home_screen.dart';
+import 'data/data.dart';
 import 'screens/schedule_screen.dart';
 import 'screens/setting_screen.dart';
 import 'service/notifex.dart';
+
+import 'package:signtome/data/local/db/app_db.dart';
+
+import 'package:drift/drift.dart' as drift;
 
 /*
 Note:
@@ -25,6 +36,8 @@ todo: 1. App Icon still flutter
 home its not work if u change page, maybe u should make own timeBuilder in this home
 
 */
+AppDb appDb = AppDb();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await localNotifier.setup(
@@ -82,6 +95,55 @@ class Shell extends StatefulWidget {
 }
 
 class _ShellState extends State<Shell> {
+  //---//
+  // database check if exist
+
+  Future<void> checkDataExist() async {
+    int count = await appDb.getSemuaSetting().then((value) => value.length);
+    if (count == 0) {
+      // settings table is empty
+      // insert data into the table
+      // ignore: prefer_const_constructors
+      await appDb.insertSetting(SettingsCompanion(
+        name: drift.Value("settBahasa"),
+        value: drift.Value("Bahasa Indonesia"),
+      ));
+      await appDb.insertSetting(SettingsCompanion(
+        name: drift.Value("settLokasi"),
+        value: drift.Value("1434"),
+      ));
+      await appDb.insertSetting(SettingsCompanion(
+        name: drift.Value("settFormat"),
+        value: drift.Value("1"),
+      ));
+      await appDb.insertSetting(SettingsCompanion(
+        name: drift.Value("settNotifikasi"),
+        value: drift.Value("1"),
+      ));
+      await appDb.insertSetting(SettingsCompanion(
+        name: drift.Value("settAlarm"),
+        value: drift.Value("1"),
+      ));
+      print("COmplete");
+    } else {
+      print("Berisi");
+
+      // settings table is not empty
+    }
+  }
+
+  //------------------------//
+  // Json To Dart
+  List<dynamic> citiesList = [];
+  Future<void> readJson() async {
+    final String response = await rootBundle.loadString('assets/cities.json');
+    final data = await json.decode(response);
+
+    setState(() {
+      citiesList = data.map((data) => Cities.fromJson(data)).toList();
+    });
+  }
+
   final AppWindow _appWindow = AppWindow();
   final SystemTray _systemTray = SystemTray();
   final Menu _menuMain = Menu();
@@ -92,6 +154,9 @@ class _ShellState extends State<Shell> {
   void initState() {
     super.initState();
     initSystemTray();
+
+    readJson();
+    checkDataExist();
   }
 
   @override
@@ -159,8 +224,20 @@ class _ShellState extends State<Shell> {
             var formatedDay = DateFormat('EEEEE', 'en_US').format(now);
 
             //show notification
-            if (int.parse(formatSec) == 1) {
-              notifAdzanDhuhur?.show();
+            if (int.parse(formatSec) == 30) {
+              int index = 50; // Select the third object in the list
+              Cities city = citiesList[index];
+              print(city.id);
+              print(city.lokasi);
+              // int counter = 0;
+              // for (var city in citiesList) {
+              //   if (counter < 2) {
+              //     print(city);
+              //   } else {
+              //     break;
+              //   }
+              //   counter++;
+              // }
             }
 
             return Column(

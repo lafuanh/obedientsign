@@ -1,0 +1,55 @@
+import 'package:drift/drift.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+final String cityid = "1434";
+final String yearnow = "2023";
+final String monthnow = "01";
+
+// if (database.schedule == null) { or make this a method
+for (int i = 0; i < 30; i++) {
+  final response = await http.get('https://api.myquran.com/v1/sholat/jadwal/$cityid/$yearnow/$monthnow/$i'); // API
+  final data = json.decode(response.body);
+
+  // final cityData = data['data'];
+  // final cityId = cityData['id'];
+  // final cityName = cityData['lokasi'];
+  // final cityRegion = cityData['daerah'];
+  // final cityLatitude = cityData['koordinat']['lat'];
+  // final cityLongitude = cityData['koordinat']['lon'];
+
+  final scheduleData = cityData['jadwal'];
+  final scheduleDate = scheduleData['date'];
+  final scheduleImsak = scheduleData['imsak'];
+  final scheduleSubuh = scheduleData['subuh'];
+  final scheduleTerbit = scheduleData['terbit'];
+  final scheduleDhuha = scheduleData['dhuha'];
+  final scheduleDzuhur = scheduleData['dzuhur'];
+  final scheduleAshar = scheduleData['ashar'];
+  final scheduleMaghrib = scheduleData['maghrib'];
+  final scheduleIsya = scheduleData['isya'];
+
+  // await database.insert(
+  //   city,
+  //   city.id.insert(cityId),
+  //   city.name.insert(cityName),
+  //   city.region.insert(cityRegion),
+  //   city.latitude.insert(cityLatitude),
+  //   city.longitude.insert(cityLongitude),
+  // );
+
+   await database.insert(
+    schedule,
+    schedule.id.insert(i),
+    schedule.date.insert(scheduleDate),
+    schedule.imsak.insert(scheduleImsak),
+    schedule.subuh.insert(scheduleSubuh),
+    schedule.terbit.insert(scheduleTerbit),
+    schedule.dhuha.insert(scheduleDhuha),
+    schedule.dzuhur.insert(scheduleDzuhur),
+    schedule.ashar.insert(scheduleAshar),
+    schedule.maghrib.insert(scheduleMaghrib),
+    schedule.isya.insert(scheduleIsya),
+    schedule.cityId.insert(cityId),
+);
+}

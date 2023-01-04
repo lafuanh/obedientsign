@@ -1,7 +1,14 @@
+import 'package:flutter/services.dart' show rootBundle;
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 
 import '../widgets/bar_window.dart';
+
+import 'package:signtome/data/local/db/app_db.dart';
+import 'package:drift/drift.dart' as drift;
+
+import 'package:signtome/main.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -11,12 +18,102 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
-  bool statusSwitchLoc = false;
+  String selectedLanguage = "Bahasa Indonesia";
+  String selectedLokasi =
+      "Kota / Kab"; //if database == null set "kota / kab" :: Database
+
   bool statusSwitchNotif = true;
-  int _value = 6;
+  int formatWaktu = 1;
+  int selectedAlarm = 1;
+// change u must not late bro
+  List<String> lokasiList = [];
+
+  Future<void> readSettings() async {
+    //change: better to make a class
+
+    selectedLanguage = (await appDb.getSetting("settBahasa")).value;
+    selectedLokasi = (await appDb.getSetting("settLokasi")).value;
+    statusSwitchNotif = (await appDb.getSetting("settNotifikasi")).value == "1";
+    formatWaktu = int.parse((await appDb.getSetting("settFormat")).value);
+    selectedAlarm = int.parse((await appDb.getSetting("settAlarm")).value);
+    print(selectedLanguage);
+  }
+
+  Future<void> savesettings() async {
+    //save sett_ Bahasa
+    //save sett  Lokasi -- lokasi ke CODE LOKASI
+    //save sett tampilan
+    //save sett notifikasi
+    //save sett alarm
+    appDb.deleteAllSettings();
+
+    await appDb.insertSetting(SettingsCompanion(
+      name: drift.Value("settBahasa"),
+      value: drift.Value(selectedLanguage),
+    ));
+    await appDb.insertSetting(SettingsCompanion(
+      name: drift.Value("settLokasi"),
+      value: drift.Value("1434"),
+    ));
+    await appDb.insertSetting(SettingsCompanion(
+      name: drift.Value("settFormat"),
+      value: drift.Value("1"),
+    ));
+    await appDb.insertSetting(SettingsCompanion(
+      name: drift.Value("settNotifikasi"),
+      value: drift.Value("1"),
+    ));
+    await appDb.insertSetting(SettingsCompanion(
+      name: drift.Value("settAlarm"),
+      value: drift.Value("1"),
+    ));
+    // await appDb.updateSetting(SettingsCompanion(
+    //   value: drift.Value(selectedLanguage),
+    //   where: (t) => t.name.equals("settBahasa"),
+    // ));
+    // await appDb.updateSetting(SettingsCompanion(
+    //   value: Value.wrap(selectedLokasi),
+    //   where: (t) => t.name.equals("settLokasi"),
+    // ));
+    // await appDb.updateSetting(SettingsCompanion(
+    //   value: Value.wrap(statusSwitchNotif ? "1" : "0"),
+    //   where: (t) => t.name.equals("settNotifikasi"),
+    // ));
+    // await appDb.updateSetting(SettingsCompanion(
+    //   value: Value.wrap(formatWaktu.toString()),
+    //   where: (t) => t.name.equals("settFormat"),
+    // ));
+    // await appDb.updateSetting(SettingsCompanion(
+    //   value: Value.wrap(selectedAlarm.toString()),
+    //   where: (t) => t.name.equals("settAlarm"),
+    // ));
+
+    print("saved");
+    //method request API 30 times
+  }
+
+  Future<void> readJson() async {
+    final String response = await rootBundle.loadString('assets/cities.json');
+    final data = await json.decode(response);
+
+    for (var city in data) {
+      lokasiList.add(city['lokasi']);
+    }
+  }
+
+  @override
+  void initState() {
+    readSettings();
+    // TODO: implement initState
+    super.initState();
+
+    readJson();
+  }
 
   @override
   Widget build(BuildContext context) {
+    readSettings();
+    print(selectedLanguage);
     return Expanded(
       child: Container(
         color: Colors.black.withOpacity(0.25),
@@ -48,7 +145,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           "Bahasa",
                           textAlign: TextAlign.left,
                         ),
@@ -62,6 +159,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               showSelectedItems: true,
                               disabledItemFn: (String s) => s.startsWith('I'),
                             ),
+                            // ignore: prefer_const_literals_to_create_immutables
                             items: [
                               "Bahasa Indonesia",
                               "English",
@@ -70,63 +168,66 @@ class _SettingScreenState extends State<SettingScreen> {
                               dropdownSearchDecoration: InputDecoration(
                                   border: InputBorder.none,
                                   constraints:
-                                      BoxConstraints.tight(Size(100, 30)),
-                                  contentPadding: EdgeInsets.symmetric(
+                                      BoxConstraints.tight(const Size(100, 30)),
+                                  contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 5)),
                             ),
-                            onChanged: print,
-                            selectedItem: "Bahasa Indonesia",
+                            onChanged: (value) {
+                              selectedLanguage = value!;
+                            },
+                            selectedItem: selectedLanguage,
                           ),
                         ),
-                        Text(
+                        const Text(
                           "Pilih Lokasi",
                           textAlign: TextAlign.left,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Auto Check Lokasi",
-                              style: TextStyle(
-                                  color: Colors.grey.withOpacity(0.9),
-                                  fontSize: 12),
-                            ),
-                            Switch(
-                                value: statusSwitchLoc,
-                                onChanged: (value) {
-                                  setState(() {
-                                    statusSwitchLoc = !statusSwitchLoc;
-                                  });
-                                }),
-                          ],
-                        ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.center,
+                        //   crossAxisAlignment: CrossAxisAlignment.center,
+                        //   children: [
+                        //     Text(
+                        //       "Auto Check Lokasi",
+                        //       style: TextStyle(
+                        //           color: Colors.grey.withOpacity(0.9),
+                        //           fontSize: 12),
+                        //     ),
+                        //     Switch(
+                        //         value: statusSwitchLoc,
+                        //         onChanged: (value) {
+                        //           setState(() {
+                        //             // someFunction(citiesList);
+                        //             statusSwitchLoc = !statusSwitchLoc;
+                        //           });
+                        //         }),
+                        //   ],
+                        // ),
                         Container(
                           color: Colors.black.withOpacity(0.25),
                           width: 180,
-                          height: 35,
-                          margin: EdgeInsets.all(8),
+                          height: 50,
+                          margin: const EdgeInsets.all(8),
                           child: DropdownSearch<String>(
                             popupProps: PopupProps.menu(
                               showSearchBox: true,
                               showSelectedItems: true,
                               disabledItemFn: (String s) => s.startsWith('I'),
                             ),
-                            items: [
-                              "Kab. Boyolali",
-                              "Kab. Surakarta",
-                            ],
+                            items: lokasiList,
                             dropdownDecoratorProps: DropDownDecoratorProps(
                               dropdownSearchDecoration: InputDecoration(
                                   hintText: "Kota / Kab Indonesia",
                                   border: InputBorder.none,
                                   constraints:
-                                      BoxConstraints.tight(Size(100, 10)),
-                                  contentPadding: EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 5)),
+                                      BoxConstraints.tight(const Size(100, 32)),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 8)),
                             ),
-                            onChanged: print,
-                            // selectedItem: "Kab Boyolali",
+                            onChanged: (value) {
+                              selectedLokasi = value!; // change thiss
+                              // print(selectedLokasi + " _debug");
+                            },
+                            selectedItem: selectedLokasi,
                           ),
                         ),
                       ],
@@ -138,13 +239,13 @@ class _SettingScreenState extends State<SettingScreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Tampilan"),
+                        const Text("Tampilan"),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Format Waktu"),
+                            const Text("Format Waktu"),
                             Container(
-                              margin: EdgeInsets.only(left: 16),
+                              margin: const EdgeInsets.only(left: 16),
                               width: 140,
                               height: 30,
                               color: Colors.black.withOpacity(0.5),
@@ -154,25 +255,33 @@ class _SettingScreenState extends State<SettingScreen> {
                                   disabledItemFn: (String s) =>
                                       s.startsWith('I'),
                                 ),
+                                // ignore: prefer_const_literals_to_create_immutables
                                 items: [
                                   "AM / PM",
                                   "24 Jam",
                                 ],
-                                dropdownDecoratorProps: DropDownDecoratorProps(
+                                dropdownDecoratorProps:
+                                    const DropDownDecoratorProps(
                                   dropdownSearchDecoration: InputDecoration(
                                       border: InputBorder.none,
                                       contentPadding: EdgeInsets.symmetric(
                                           horizontal: 16, vertical: 1)),
                                 ),
-                                onChanged: print,
-                                selectedItem: "AM / PM",
+                                onChanged: (value) {
+                                  if (value == "AM / PM") {
+                                    formatWaktu = 1;
+                                  } else if (value == "24 Jam") {
+                                    formatWaktu = 2;
+                                  }
+                                },
+                                selectedItem: convertFwaktuToList(),
                               ),
                             )
                           ],
                         ),
                         Row(
                           children: [
-                            Text("Notifikasi"),
+                            const Text("Notifikasi"),
                             Switch(
                                 value: statusSwitchNotif,
                                 onChanged: (value) {
@@ -185,11 +294,11 @@ class _SettingScreenState extends State<SettingScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Alarm"),
+                            const Text("Alarm"),
                             Container(
-                              margin: EdgeInsets.only(left: 16),
+                              margin: const EdgeInsets.only(left: 16),
                               width: 200,
-                              height: 30,
+                              height: 35,
                               color: Colors.black.withOpacity(0.5),
                               child: DropdownSearch<String>(
                                 popupProps: PopupProps.menu(
@@ -197,40 +306,72 @@ class _SettingScreenState extends State<SettingScreen> {
                                   disabledItemFn: (String s) =>
                                       s.startsWith('I'),
                                 ),
-                                items: [
-                                  "Adzan",
-                                  "suara notif dan pop notifikasi",
-                                  "pop notif saja"
-                                ],
-                                dropdownDecoratorProps: DropDownDecoratorProps(
+                                items: ["Adzan & pop notif", "pop notif saja"],
+                                dropdownDecoratorProps:
+                                    const DropDownDecoratorProps(
                                   dropdownSearchDecoration: InputDecoration(
                                       border: InputBorder.none,
                                       contentPadding: EdgeInsets.symmetric(
                                           horizontal: 16, vertical: 1)),
                                 ),
-                                onChanged: print,
-                                selectedItem: "Adzan",
+                                onChanged: (value) {
+                                  if (value == "pop notif saja") {
+                                    1;
+                                  } else if (value == "Adzan & pop notif") {
+                                    2;
+                                  }
+                                },
+                                selectedItem: convertFalarmToList(),
                               ),
                             )
                           ],
                         ),
-                        Text("Volume Adzan"),
-                        Slider(
-                            value: _value.toDouble(),
-                            min: 1.0,
-                            max: 20.0,
-                            divisions: 10,
-                            activeColor: Colors.white,
-                            inactiveColor: Colors.grey.withOpacity(0.5),
-                            // label: 'Set volume value',
-                            onChanged: (double newValue) {
-                              setState(() {
-                                _value = newValue.round();
-                              });
-                            },
-                            semanticFormatterCallback: (double newValue) {
-                              return '${newValue.round()} dollars';
-                            })
+                        // Text("Volume Adzan"),
+                        // Slider(
+                        //     value: _value.toDouble(),
+                        //     min: 1.0,
+                        //     max: 20.0,
+                        //     divisions: 10,
+                        //     activeColor: Colors.white,
+                        //     inactiveColor: Colors.grey.withOpacity(0.5),
+                        //     // label: 'Set volume value',
+                        //     onChanged: (double newValue) {
+                        //       setState(() {
+                        //         _value = newValue.round();
+                        //       });
+                        //     },
+                        //     semanticFormatterCallback: (double newValue) {
+                        //       return '${newValue.round()} dollars';
+                        //     })
+
+                        Row(
+                          children: [
+                            const Text(
+                              "Please save Settings :",
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(top: 16.0, left: 25),
+                              child: FloatingActionButton(
+                                mini: true,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(8),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  savesettings();
+                                  // set list of settings in database where language with a code of city based on citiesList
+                                  // then insert 30 times table of schedule
+                                  // then returnif ready
+                                  // Handle the button press
+                                },
+                                child: const Icon(Icons.save),
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   )
@@ -241,5 +382,21 @@ class _SettingScreenState extends State<SettingScreen> {
         ),
       ),
     );
+  }
+
+  convertFwaktuToList() {
+    if (formatWaktu == 1) {
+      return "AM / PM";
+    } else if (formatWaktu == 2) {
+      return "24 Jam";
+    }
+  }
+
+  convertFalarmToList() {
+    if (selectedAlarm == 1) {
+      return "adzan & pop notif";
+    } else if (selectedAlarm == 2) {
+      return "pop notif saja"; //
+    }
   }
 }

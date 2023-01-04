@@ -1,37 +1,12 @@
 class Settings {
-  String id;
+  String name;
   String value;
 
   Settings({
-    required this.id,
+    required this.name,
     required this.value,
   });
 }
-
-List<Settings> pengaturan = [
-  Settings(
-      id: "0", //language settings
-      value: "Bahasa Indonesia"),
-  Settings(
-      id: "2", // auto lokasi
-      value: "on"),
-  Settings(
-      id: "3", // lokasi offline
-      value: "0000" // id Kota or kabupaten
-      ),
-  Settings(
-      id: "4", //Format waktu
-      value: "AM / PM"),
-  Settings(
-      id: "5", //nontifikasi
-      value: "on"),
-  Settings(
-      id: "6", //type alarm
-      value: "1"),
-  Settings(
-      id: "7", // volume notifikasi
-      value: "50"),
-];
 
 class jadwalSholat {
   String id;
