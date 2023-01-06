@@ -37,6 +37,7 @@ home its not work if u change page, maybe u should make own timeBuilder in this 
 
 */
 AppDb appDb = AppDb();
+List<dynamic> citiesList = [];
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -116,16 +117,14 @@ class _ShellState extends State<Shell> {
         name: drift.Value("settFormat"),
         value: drift.Value("1"),
       ));
-      await appDb.insertSetting(SettingsCompanion(
-        name: drift.Value("settNotifikasi"),
-        value: drift.Value("1"),
-      ));
+
       await appDb.insertSetting(SettingsCompanion(
         name: drift.Value("settAlarm"),
         value: drift.Value("1"),
       ));
       print("COmplete");
     } else {
+      // appDb.deleteAllSettings();
       print("Berisi");
 
       // settings table is not empty
@@ -134,7 +133,7 @@ class _ShellState extends State<Shell> {
 
   //------------------------//
   // Json To Dart
-  List<dynamic> citiesList = [];
+
   Future<void> readJson() async {
     final String response = await rootBundle.loadString('assets/cities.json');
     final data = await json.decode(response);
@@ -225,10 +224,6 @@ class _ShellState extends State<Shell> {
 
             //show notification
             if (int.parse(formatSec) == 30) {
-              int index = 50; // Select the third object in the list
-              Cities city = citiesList[index];
-              print(city.id);
-              print(city.lokasi);
               // int counter = 0;
               // for (var city in citiesList) {
               //   if (counter < 2) {
@@ -240,24 +235,7 @@ class _ShellState extends State<Shell> {
               // }
             }
 
-            return Column(
-
-                // children: [
-                //   Center(
-                //     child: Text(
-                //       formatTime + ':' + formatSec,
-                //       style: TextStyle(
-                //         color: Colors.white.withOpacity(0.8),
-                //         fontSize: 40,
-                //         fontWeight: FontWeight.normal,
-                //       ),
-                //     ),
-                //   ),
-                //   Center(
-                //     child: Text(formatedDay),
-                //   )
-                // ],
-                );
+            return Column();
           }),
           Container(
             height: double.infinity,

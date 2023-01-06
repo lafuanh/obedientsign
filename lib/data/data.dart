@@ -8,6 +8,31 @@ class Settings {
   });
 }
 
+List<Settings> pengaturan = [
+  Settings(
+      name: "settLanguage", //language settings
+      value: "Bahasa Indonesia"),
+  Settings(
+      name: "2", // auto lokasi
+      value: "on"),
+  Settings(
+      name: "3", // lokasi offline
+      value: "0000" // id Kota or kabupaten
+      ),
+  Settings(
+      name: "4", //Format waktu
+      value: "AM / PM"),
+  Settings(
+      name: "5", //nontifikasi
+      value: "on"),
+  Settings(
+      name: "6", //type alarm
+      value: "1"),
+  Settings(
+      name: "7", // volume notifikasi
+      value: "50"),
+];
+
 class jadwalSholat {
   String id;
   String namaJadwal;

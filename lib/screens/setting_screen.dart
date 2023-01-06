@@ -3,12 +3,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 
+import '../service/cities.dart';
 import '../widgets/bar_window.dart';
 
 import 'package:signtome/data/local/db/app_db.dart';
 import 'package:drift/drift.dart' as drift;
 
 import 'package:signtome/main.dart';
+import 'package:signtome/data/http_request';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -22,21 +24,20 @@ class _SettingScreenState extends State<SettingScreen> {
   String selectedLokasi =
       "Kota / Kab"; //if database == null set "kota / kab" :: Database
 
-  bool statusSwitchNotif = true;
   int formatWaktu = 1;
   int selectedAlarm = 1;
-// change u must not late bro
   List<String> lokasiList = [];
 
   Future<void> readSettings() async {
     //change: better to make a class
 
     selectedLanguage = (await appDb.getSetting("settBahasa")).value;
-    selectedLokasi = (await appDb.getSetting("settLokasi")).value;
-    statusSwitchNotif = (await appDb.getSetting("settNotifikasi")).value == "1";
+    final codeLokasi = (await appDb.getSetting("settLokasi")).value;
     formatWaktu = int.parse((await appDb.getSetting("settFormat")).value);
     selectedAlarm = int.parse((await appDb.getSetting("settAlarm")).value);
-    print(selectedLanguage);
+
+    Cities city = await citiesList.where((city) => city.id == codeLokasi).first;
+    selectedLokasi = city.lokasi;
   }
 
   Future<void> savesettings() async {
@@ -45,6 +46,9 @@ class _SettingScreenState extends State<SettingScreen> {
     //save sett tampilan
     //save sett notifikasi
     //save sett alarm
+    Cities city =
+        await citiesList.where((city) => city.lokasi == selectedLokasi).first;
+    final codeLokasi = city.id;
     appDb.deleteAllSettings();
 
     await appDb.insertSetting(SettingsCompanion(
@@ -53,42 +57,23 @@ class _SettingScreenState extends State<SettingScreen> {
     ));
     await appDb.insertSetting(SettingsCompanion(
       name: drift.Value("settLokasi"),
-      value: drift.Value("1434"),
+      value: drift.Value(
+          codeLokasi), // method to convert from CITY NAME TO CODE NAME
     ));
     await appDb.insertSetting(SettingsCompanion(
       name: drift.Value("settFormat"),
-      value: drift.Value("1"),
+      value: drift.Value(formatWaktu.toString()),
     ));
-    await appDb.insertSetting(SettingsCompanion(
-      name: drift.Value("settNotifikasi"),
-      value: drift.Value("1"),
-    ));
+
     await appDb.insertSetting(SettingsCompanion(
       name: drift.Value("settAlarm"),
-      value: drift.Value("1"),
+      value: drift.Value(selectedAlarm
+          .toString()), // method to convert from alarm NAME TO CODE
     ));
-    // await appDb.updateSetting(SettingsCompanion(
-    //   value: drift.Value(selectedLanguage),
-    //   where: (t) => t.name.equals("settBahasa"),
-    // ));
-    // await appDb.updateSetting(SettingsCompanion(
-    //   value: Value.wrap(selectedLokasi),
-    //   where: (t) => t.name.equals("settLokasi"),
-    // ));
-    // await appDb.updateSetting(SettingsCompanion(
-    //   value: Value.wrap(statusSwitchNotif ? "1" : "0"),
-    //   where: (t) => t.name.equals("settNotifikasi"),
-    // ));
-    // await appDb.updateSetting(SettingsCompanion(
-    //   value: Value.wrap(formatWaktu.toString()),
-    //   where: (t) => t.name.equals("settFormat"),
-    // ));
-    // await appDb.updateSetting(SettingsCompanion(
-    //   value: Value.wrap(selectedAlarm.toString()),
-    //   where: (t) => t.name.equals("settAlarm"),
-    // ));
 
     print("saved");
+
+    // getOneMonthJadwal(codeLokasi, "2023", "1");
     //method request API 30 times
   }
 
@@ -112,8 +97,20 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    readSettings();
-    print(selectedLanguage);
+    return FutureBuilder(
+      future: readSettings(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return layerSettings();
+        } else {
+          return layerSettings();
+        }
+      },
+    );
+    // return layerSettings();
+  }
+
+  Expanded layerSettings() {
     return Expanded(
       child: Container(
         color: Colors.black.withOpacity(0.25),
@@ -122,16 +119,6 @@ class _SettingScreenState extends State<SettingScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const WindowButton(), //Costume appBar
-            // const Padding(
-            //   padding: EdgeInsets.symmetric(
-            //     horizontal: 16.0,
-            //   ),
-            //   child: Text(
-            //     "Settings",
-            //     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            //   ),
-            // ),
-
             Padding(
               padding: const EdgeInsets.only(top: 2.0),
               child: Row(
@@ -279,24 +266,26 @@ class _SettingScreenState extends State<SettingScreen> {
                             )
                           ],
                         ),
-                        Row(
-                          children: [
-                            const Text("Notifikasi"),
-                            Switch(
-                                value: statusSwitchNotif,
-                                onChanged: (value) {
-                                  setState(() {
-                                    statusSwitchNotif = !statusSwitchNotif;
-                                  });
-                                }),
-                          ],
-                        ),
+                        // Row(
+                        //   children: [
+                        //     const Text("Notifikasi"),
+                        //     Switch(
+                        //       value: statusSwitchNotif,
+                        //       onChanged: (value) async {
+                        //         setState(() {
+                        //           statusSwitchNotif = value;
+                        //         });
+
+                        //       },
+                        //     ),
+                        //   ],
+                        // ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             const Text("Alarm"),
                             Container(
-                              margin: const EdgeInsets.only(left: 16),
+                              margin: const EdgeInsets.only(left: 16, top: 16),
                               width: 200,
                               height: 35,
                               color: Colors.black.withOpacity(0.5),
@@ -315,10 +304,10 @@ class _SettingScreenState extends State<SettingScreen> {
                                           horizontal: 16, vertical: 1)),
                                 ),
                                 onChanged: (value) {
-                                  if (value == "pop notif saja") {
-                                    1;
-                                  } else if (value == "Adzan & pop notif") {
-                                    2;
+                                  if (value == "Adzan & pop notif") {
+                                    selectedAlarm = 1;
+                                  } else if (value == "pop notif saja") {
+                                    selectedAlarm = 2;
                                   }
                                 },
                                 selectedItem: convertFalarmToList(),
@@ -384,6 +373,8 @@ class _SettingScreenState extends State<SettingScreen> {
     );
   }
 
+//   }
+
   convertFwaktuToList() {
     if (formatWaktu == 1) {
       return "AM / PM";
@@ -398,5 +389,10 @@ class _SettingScreenState extends State<SettingScreen> {
     } else if (selectedAlarm == 2) {
       return "pop notif saja"; //
     }
+  }
+
+  String convertFlokasiToCode(String cityID) {
+    Cities city = citiesList.where((city) => city.id == cityID).first;
+    return city.lokasi;
   }
 }
