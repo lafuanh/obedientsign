@@ -36,7 +36,7 @@ todo: 1. App Icon still flutter
 home its not work if u change page, maybe u should make own timeBuilder in this home
 
 */
-AppDb appDb = AppDb();
+
 List<dynamic> citiesList = [];
 
 void main() async {
@@ -125,6 +125,7 @@ class _ShellState extends State<Shell> {
       print("COmplete");
     } else {
       // appDb.deleteAllSettings();
+      // appDb.deleteAllJadwal();
       print("Berisi");
 
       // settings table is not empty
@@ -209,6 +210,14 @@ class _ShellState extends State<Shell> {
     _systemTray.setContextMenu(_menuMain);
   }
 
+  Future<void> printImsakInRow9() async {
+    // Get the JadwalData object for the row with ID 9
+    JadwalData jadwalData = await appDb.getJadwal(30);
+
+    // // Print the value of the "imsak" column
+    print(DateFormat("yyyy-MM-dd").format(jadwalData.tanggalSholat));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -223,7 +232,8 @@ class _ShellState extends State<Shell> {
             var formatedDay = DateFormat('EEEEE', 'en_US').format(now);
 
             //show notification
-            if (int.parse(formatSec) == 30) {
+            if (int.parse(formatSec) == 45) {
+              // printImsakInRow9();
               // int counter = 0;
               // for (var city in citiesList) {
               //   if (counter < 2) {

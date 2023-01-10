@@ -10,6 +10,8 @@ import '../entity/jadwal_entity.dart';
 
 part 'app_db.g.dart';
 
+AppDb appDb = AppDb();
+
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
