@@ -1,0 +1,48 @@
+// import 'package:drift/drift.dart';
+// import 'package:http/http.dart' as http;
+// import 'dart:convert';
+
+// // final String cityid = "1434";
+// // final String yearnow = "2023";
+// // final String monthnow = "01";
+
+// // if (database.schedule == null) { or make this a method
+
+
+
+
+// getOneMonthJadwal(String cityid, String yearnow, String monthnow){
+// for (int i = 0; i < 20; i++) {
+//   final response = await http.get('https://api.myquran.com/v1/sholat/jadwal/$cityid/$yearnow/$monthnow/$i'); // API
+//   final data = json.decode(response.body);
+
+//   final scheduleData = await cityData['jadwal'];
+//   final scheduleDate = await scheduleData['date'];
+//   final scheduleImsak = await scheduleData['imsak'];
+//   final scheduleSubuh = await scheduleData['subuh'];
+//   final scheduleTerbit = await scheduleData['terbit'];
+//   final scheduleDhuha = await scheduleData['dhuha'];
+//   final scheduleDzuhur = await scheduleData['dzuhur'];
+//   final scheduleAshar = await scheduleData['ashar'];
+//   final scheduleMaghrib = await scheduleData['maghrib'];
+//   final scheduleIsya = await scheduleData['isya'];
+
+//   await appDb.insertJadwal(SettingsCompanion(
+
+//         tanggalasId: drift.Value(int.parse(i)),
+//         tanggalSholat: drift.Value("settBahasa"),
+
+//         imsak: drift.Value(scheduleImsak),
+//         subuh: drift.Value(scheduleSubuh), 
+//         terbit: drift.Value(scheduleTerbit),
+//         dhuha: drift.Value(scheduleDhuha),
+//         dzuhur: drift.Value(scheduleDzuhur),
+//         ashar: drift.Value(scheduleAshar),
+//         maghrib: drift.Value(scheduleMaghrib),
+//         isya: drift.Value(scheduleIsya),
+//       ));
+
+
+ 
+// }
+// }

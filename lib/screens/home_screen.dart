@@ -23,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             const WindowButton(), //Costume appBar
 
-            const Padding(padding: EdgeInsets.symmetric(vertical: 10.0)),
+            const Padding(padding: EdgeInsets.symmetric(vertical: 5.0)),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
