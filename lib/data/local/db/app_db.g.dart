@@ -650,13 +650,342 @@ class $JadwalTable extends Jadwal with TableInfo<$JadwalTable, JadwalData> {
   }
 }
 
+class ScreenData extends DataClass implements Insertable<ScreenData> {
+  final int id;
+  final String? name;
+  final bool switchNotif;
+  final String timeClock;
+  final String? status;
+  final int jadwalId;
+  const ScreenData(
+      {required this.id,
+      this.name,
+      required this.switchNotif,
+      required this.timeClock,
+      this.status,
+      required this.jadwalId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    if (!nullToAbsent || name != null) {
+      map['name'] = Variable<String>(name);
+    }
+    map['switch_notif'] = Variable<bool>(switchNotif);
+    map['time_clock'] = Variable<String>(timeClock);
+    if (!nullToAbsent || status != null) {
+      map['status'] = Variable<String>(status);
+    }
+    map['jadwal_id'] = Variable<int>(jadwalId);
+    return map;
+  }
+
+  ScreenCompanion toCompanion(bool nullToAbsent) {
+    return ScreenCompanion(
+      id: Value(id),
+      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
+      switchNotif: Value(switchNotif),
+      timeClock: Value(timeClock),
+      status:
+          status == null && nullToAbsent ? const Value.absent() : Value(status),
+      jadwalId: Value(jadwalId),
+    );
+  }
+
+  factory ScreenData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ScreenData(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String?>(json['name']),
+      switchNotif: serializer.fromJson<bool>(json['switchNotif']),
+      timeClock: serializer.fromJson<String>(json['timeClock']),
+      status: serializer.fromJson<String?>(json['status']),
+      jadwalId: serializer.fromJson<int>(json['jadwalId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String?>(name),
+      'switchNotif': serializer.toJson<bool>(switchNotif),
+      'timeClock': serializer.toJson<String>(timeClock),
+      'status': serializer.toJson<String?>(status),
+      'jadwalId': serializer.toJson<int>(jadwalId),
+    };
+  }
+
+  ScreenData copyWith(
+          {int? id,
+          Value<String?> name = const Value.absent(),
+          bool? switchNotif,
+          String? timeClock,
+          Value<String?> status = const Value.absent(),
+          int? jadwalId}) =>
+      ScreenData(
+        id: id ?? this.id,
+        name: name.present ? name.value : this.name,
+        switchNotif: switchNotif ?? this.switchNotif,
+        timeClock: timeClock ?? this.timeClock,
+        status: status.present ? status.value : this.status,
+        jadwalId: jadwalId ?? this.jadwalId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('ScreenData(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('switchNotif: $switchNotif, ')
+          ..write('timeClock: $timeClock, ')
+          ..write('status: $status, ')
+          ..write('jadwalId: $jadwalId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, name, switchNotif, timeClock, status, jadwalId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ScreenData &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.switchNotif == this.switchNotif &&
+          other.timeClock == this.timeClock &&
+          other.status == this.status &&
+          other.jadwalId == this.jadwalId);
+}
+
+class ScreenCompanion extends UpdateCompanion<ScreenData> {
+  final Value<int> id;
+  final Value<String?> name;
+  final Value<bool> switchNotif;
+  final Value<String> timeClock;
+  final Value<String?> status;
+  final Value<int> jadwalId;
+  const ScreenCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.switchNotif = const Value.absent(),
+    this.timeClock = const Value.absent(),
+    this.status = const Value.absent(),
+    this.jadwalId = const Value.absent(),
+  });
+  ScreenCompanion.insert({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.switchNotif = const Value.absent(),
+    required String timeClock,
+    this.status = const Value.absent(),
+    required int jadwalId,
+  })  : timeClock = Value(timeClock),
+        jadwalId = Value(jadwalId);
+  static Insertable<ScreenData> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<bool>? switchNotif,
+    Expression<String>? timeClock,
+    Expression<String>? status,
+    Expression<int>? jadwalId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (switchNotif != null) 'switch_notif': switchNotif,
+      if (timeClock != null) 'time_clock': timeClock,
+      if (status != null) 'status': status,
+      if (jadwalId != null) 'jadwal_id': jadwalId,
+    });
+  }
+
+  ScreenCompanion copyWith(
+      {Value<int>? id,
+      Value<String?>? name,
+      Value<bool>? switchNotif,
+      Value<String>? timeClock,
+      Value<String?>? status,
+      Value<int>? jadwalId}) {
+    return ScreenCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      switchNotif: switchNotif ?? this.switchNotif,
+      timeClock: timeClock ?? this.timeClock,
+      status: status ?? this.status,
+      jadwalId: jadwalId ?? this.jadwalId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (switchNotif.present) {
+      map['switch_notif'] = Variable<bool>(switchNotif.value);
+    }
+    if (timeClock.present) {
+      map['time_clock'] = Variable<String>(timeClock.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (jadwalId.present) {
+      map['jadwal_id'] = Variable<int>(jadwalId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ScreenCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('switchNotif: $switchNotif, ')
+          ..write('timeClock: $timeClock, ')
+          ..write('status: $status, ')
+          ..write('jadwalId: $jadwalId')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ScreenTable extends Screen with TableInfo<$ScreenTable, ScreenData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ScreenTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _switchNotifMeta =
+      const VerificationMeta('switchNotif');
+  @override
+  late final GeneratedColumn<bool> switchNotif =
+      GeneratedColumn<bool>('switch_notif', aliasedName, false,
+          type: DriftSqlType.bool,
+          requiredDuringInsert: false,
+          defaultConstraints: GeneratedColumn.constraintsDependsOnDialect({
+            SqlDialect.sqlite: 'CHECK ("switch_notif" IN (0, 1))',
+            SqlDialect.mysql: '',
+            SqlDialect.postgres: '',
+          }),
+          defaultValue: const Constant(false));
+  static const VerificationMeta _timeClockMeta =
+      const VerificationMeta('timeClock');
+  @override
+  late final GeneratedColumn<String> timeClock = GeneratedColumn<String>(
+      'time_clock', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+      'status', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _jadwalIdMeta =
+      const VerificationMeta('jadwalId');
+  @override
+  late final GeneratedColumn<int> jadwalId = GeneratedColumn<int>(
+      'jadwal_id', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, name, switchNotif, timeClock, status, jadwalId];
+  @override
+  String get aliasedName => _alias ?? 'screen';
+  @override
+  String get actualTableName => 'screen';
+  @override
+  VerificationContext validateIntegrity(Insertable<ScreenData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+    }
+    if (data.containsKey('switch_notif')) {
+      context.handle(
+          _switchNotifMeta,
+          switchNotif.isAcceptableOrUnknown(
+              data['switch_notif']!, _switchNotifMeta));
+    }
+    if (data.containsKey('time_clock')) {
+      context.handle(_timeClockMeta,
+          timeClock.isAcceptableOrUnknown(data['time_clock']!, _timeClockMeta));
+    } else if (isInserting) {
+      context.missing(_timeClockMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(_statusMeta,
+          status.isAcceptableOrUnknown(data['status']!, _statusMeta));
+    }
+    if (data.containsKey('jadwal_id')) {
+      context.handle(_jadwalIdMeta,
+          jadwalId.isAcceptableOrUnknown(data['jadwal_id']!, _jadwalIdMeta));
+    } else if (isInserting) {
+      context.missing(_jadwalIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ScreenData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ScreenData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name']),
+      switchNotif: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}switch_notif'])!,
+      timeClock: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}time_clock'])!,
+      status: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}status']),
+      jadwalId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}jadwal_id'])!,
+    );
+  }
+
+  @override
+  $ScreenTable createAlias(String alias) {
+    return $ScreenTable(attachedDatabase, alias);
+  }
+}
+
 abstract class _$AppDb extends GeneratedDatabase {
   _$AppDb(QueryExecutor e) : super(e);
   late final $SettingsTable settings = $SettingsTable(this);
   late final $JadwalTable jadwal = $JadwalTable(this);
+  late final $ScreenTable screen = $ScreenTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [settings, jadwal];
+  List<DatabaseSchemaEntity> get allSchemaEntities =>
+      [settings, jadwal, screen];
 }

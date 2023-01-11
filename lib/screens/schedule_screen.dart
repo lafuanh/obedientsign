@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:signtome/data/local/db/app_db.dart';
 import 'package:signtome/widgets/bar_window.dart';
+
+import 'package:drift/drift.dart' as drift;
 
 class SchecduleScreen extends StatefulWidget {
   const SchecduleScreen({super.key});
@@ -9,9 +12,58 @@ class SchecduleScreen extends StatefulWidget {
   State<SchecduleScreen> createState() => _SchecduleScreenState();
 }
 
+String imsak = "04:30";
+String subuh = "04:40";
+String terbit = "04:40";
+String dhuzur = "04:40";
+String ashar = "04:40";
+String maghrib = "04:40";
+String isya = "04:40";
+
+Future<void> readScreen() async {
+  //change: better to make a class
+
+  imsak = (await appDb.getScreen("imsak")).timeClock;
+  subuh = (await appDb.getScreen("subuh")).timeClock;
+  terbit = (await appDb.getScreen("terbit")).timeClock;
+  dhuzur = (await appDb.getScreen("dhuzur")).timeClock;
+  ashar = (await appDb.getScreen("ashar")).timeClock;
+  maghrib = (await appDb.getScreen("maghrib")).timeClock;
+  isya = (await appDb.getScreen("isya")).timeClock;
+}
+
+// Future<void> checkTableStats() async {
+//   //change: better to make a class
+//   for (items on table){
+//     if((await appDb.getidScreen(i)).status; == "waiting") => check
+//   }
+
+//   if ((await appDb.getidScreen(i)).jadwalId; == !today) => update alloftime => check list waiting
+
+// }
+
 class _SchecduleScreenState extends State<SchecduleScreen> {
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder(
+      // future: readSettings(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return updateScreen();
+        } else {
+          return updateScreen();
+        }
+      },
+    );
+    // return layerSettings();
+  }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return plainScreen();
+  // }
+
+  Expanded updateScreen() {
     return Expanded(
       child: Container(
           color: Color(0xFF1E1E26),
@@ -38,31 +90,31 @@ class _SchecduleScreenState extends State<SchecduleScreen> {
                     children: [
                       CardSchedule(
                         nameTimeS: "Imsak",
-                        dateTimeS: "04:30",
+                        dateTimeS: imsak,
                       ),
                       CardSchedule(
                         nameTimeS: "Shubuh",
-                        dateTimeS: "04:40",
+                        dateTimeS: subuh,
                       ),
                       CardSchedule(
                         nameTimeS: "Terbit",
-                        dateTimeS: "05:40",
+                        dateTimeS: terbit,
                       ),
                       CardSchedule(
                         nameTimeS: "Dhuzur",
-                        dateTimeS: "12:40",
+                        dateTimeS: dhuzur,
                       ),
                       CardSchedule(
                         nameTimeS: "Ashar",
-                        dateTimeS: "15:40",
+                        dateTimeS: ashar,
                       ),
                       CardSchedule(
                         nameTimeS: "Maghrib",
-                        dateTimeS: "17:40",
+                        dateTimeS: maghrib,
                       ),
                       CardSchedule(
                         nameTimeS: "Isya",
-                        dateTimeS: "18:40",
+                        dateTimeS: isya,
                       ),
                     ]),
               ),
@@ -96,11 +148,50 @@ class CardSchedule extends StatefulWidget {
   State<CardSchedule> createState() => _CardScheduleState();
 }
 
-bool isActive = true;
-
 class _CardScheduleState extends State<CardSchedule> {
+  bool isActive = true;
+  Future<void> readSwitch() async {
+    //change: better to make a class
+    isActive = (await appDb.getScreen(widget.nameTimeS)).switchNotif;
+  }
+
+  Future<void> updateSwitch() async {
+    if (isActive == true) {
+      isActive = false;
+    } else if (isActive == false) {
+      isActive = true;
+    }
+
+    //change: better to make a class
+    await appDb.updateScreen(ScreenCompanion(
+      name: drift.Value(widget.nameTimeS),
+      switchNotif: drift.Value(isActive),
+    ));
+
+    print(isActive);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    // readSwitch();
+  }
+
   @override
   Widget build(BuildContext context) {
+    return updatecolumn();
+    // return FutureBuilder(
+    //     future: readSwitch(),
+    //     builder: (BuildContext context, AsyncSnapshot snapshot) {
+    //       if (snapshot.connectionState == ConnectionState.done) {
+    //         return updatecolumn();
+    //       } else {
+    //         return updatecolumn();
+    //       }
+    //     });
+  }
+
+  Container updatecolumn() {
     return Container(
       color: Colors.black.withOpacity(0.1),
       child: Column(
@@ -112,7 +203,7 @@ class _CardScheduleState extends State<CardSchedule> {
             InkWell(
               onTap: () {
                 setState(() {
-                  isActive ? isActive = false : isActive = true;
+                  updateSwitch();
                 });
               },
               child: Container(

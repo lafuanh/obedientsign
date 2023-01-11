@@ -9,6 +9,7 @@ import 'package:flutter/material.dart' hide MenuItem;
 
 import 'package:flutter/services.dart';
 import 'package:signtome/service/cities.dart';
+import 'package:signtome/service/schedule_maker.dart';
 
 import 'package:timer_builder/timer_builder.dart';
 import 'package:intl/intl.dart';
@@ -122,6 +123,8 @@ class _ShellState extends State<Shell> {
         name: drift.Value("settAlarm"),
         value: drift.Value("1"),
       ));
+
+      // makeScreenData();
       print("COmplete");
     } else {
       // appDb.deleteAllSettings();
@@ -157,6 +160,8 @@ class _ShellState extends State<Shell> {
 
     readJson();
     checkDataExist();
+    printImsakInRow9();
+    makeScreenData();
   }
 
   @override
@@ -215,6 +220,7 @@ class _ShellState extends State<Shell> {
     JadwalData jadwalData = await appDb.getJadwal(30);
 
     // // Print the value of the "imsak" column
+    print(jadwalData.imsak);
     print(DateFormat("yyyy-MM-dd").format(jadwalData.tanggalSholat));
   }
 
@@ -233,7 +239,6 @@ class _ShellState extends State<Shell> {
 
             //show notification
             if (int.parse(formatSec) == 45) {
-              // printImsakInRow9();
               // int counter = 0;
               // for (var city in citiesList) {
               //   if (counter < 2) {

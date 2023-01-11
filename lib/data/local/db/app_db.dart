@@ -5,6 +5,7 @@ import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 
+import 'package:signtome/data/local/entity/screen_entity.dart';
 import 'package:signtome/data/local/entity/settings_entity.dart';
 import '../entity/jadwal_entity.dart';
 
@@ -21,7 +22,9 @@ LazyDatabase _openConnection() {
   });
 }
 
-@DriftDatabase(tables: [Settings, Jadwal])
+@DriftDatabase(
+  tables: [Settings, Jadwal, Screen],
+)
 class AppDb extends _$AppDb {
   AppDb() : super(_openConnection());
 
@@ -76,5 +79,38 @@ class AppDb extends _$AppDb {
 
   Future<int> deleteAllSettings() async {
     return await (delete(settings)).go();
+  }
+
+  //________________________//
+  //get the Query of Screen
+
+  Future<List<ScreenData>> getSemuaScreen() async {
+    return await select(screen).get();
+  }
+
+  Future<ScreenData> getScreen(String name) async {
+    return await (select(screen)..where((tbl) => tbl.name.equals(name)))
+        .getSingle();
+  }
+
+  Future<ScreenData> getidScreen(int ide) async {
+    return await (select(screen)..where((tbl) => tbl.id.equals(ide)))
+        .getSingle();
+  }
+
+  Future<bool> updateScreen(ScreenCompanion entity) async {
+    return await update(screen).replace(entity);
+  }
+
+  Future<int> insertScreen(ScreenCompanion entity) async {
+    return await into(screen).insert(entity);
+  }
+
+  Future<int> deleteAllSScreen() async {
+    return await (delete(screen)).go();
+  }
+
+  Future<int> deleteScreen(int id) async {
+    return await (delete(screen)..where((tbl) => tbl.id.equals(id))).go();
   }
 }

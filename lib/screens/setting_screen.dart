@@ -10,7 +10,6 @@ import 'package:signtome/data/local/db/app_db.dart';
 import 'package:drift/drift.dart' as drift;
 
 import 'package:signtome/main.dart';
-import 'package:signtome/data/http_request';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
