@@ -16,7 +16,7 @@ AppDb appDb = AppDb();
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
-    final file = File(path.join(dbFolder.path, 'jadwal.sqlite'));
+    final file = File(path.join(dbFolder.path, 'dbmati.sqlite'));
 
     return NativeDatabase(file);
   });
@@ -98,8 +98,27 @@ class AppDb extends _$AppDb {
         .getSingle();
   }
 
+  Future<ScreenData> getStatusScreen(String ide) async {
+    return await (select(screen)..where((tbl) => tbl.status.equals(ide)))
+        .getSingle();
+  }
+
   Future<bool> updateScreen(ScreenCompanion entity) async {
     return await update(screen).replace(entity);
+  }
+
+  Future updateScreenStatus(String name, String statusa) async {
+    return await (update(screen)..where((t) => t.name.equals(name)))
+        .write(ScreenCompanion(
+      status: Value(statusa),
+    ));
+  }
+
+  Future updateScreenStatusId(int ide, String statusa) async {
+    return await (update(screen)..where((t) => t.id.equals(ide)))
+        .write(ScreenCompanion(
+      status: Value(statusa),
+    ));
   }
 
   Future<int> insertScreen(ScreenCompanion entity) async {

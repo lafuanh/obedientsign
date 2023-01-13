@@ -41,6 +41,7 @@ dependencies:
   intl: ^0.17.0
   slide_digital_clock: ^1.0.2
   timer_builder: ^2.0.0
+  hijri: ^3.0.0
 
 
   flutter:

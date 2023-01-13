@@ -12,6 +12,7 @@ class SchecduleScreen extends StatefulWidget {
   State<SchecduleScreen> createState() => _SchecduleScreenState();
 }
 
+String lokasi = "indonesia";
 String imsak = "04:30";
 String subuh = "04:40";
 String terbit = "04:40";
@@ -22,6 +23,7 @@ String isya = "04:40";
 
 Future<void> readScreen() async {
   //change: better to make a class
+  lokasi = (await appDb.getSetting("settLokasi")).value;
 
   imsak = (await appDb.getScreen("imsak")).timeClock;
   subuh = (await appDb.getScreen("subuh")).timeClock;
@@ -44,9 +46,16 @@ Future<void> readScreen() async {
 
 class _SchecduleScreenState extends State<SchecduleScreen> {
   @override
+  void initState() {
+    // TODO: implement initState
+
+    readScreen();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      // future: readSettings(),
+      future: readScreen(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return updateScreen();
@@ -71,7 +80,13 @@ class _SchecduleScreenState extends State<SchecduleScreen> {
             children: [
               const WindowButton(), //Costume appBar
               Row(
-                children: [Text("< "), Text("Surakarta, Indonesia")],
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12),
+                    child: Text("> "),
+                  ),
+                  Text("$lokasi, Indonesia")
+                ],
               ),
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
@@ -161,7 +176,6 @@ class _CardScheduleState extends State<CardSchedule> {
     } else if (isActive == false) {
       isActive = true;
     }
-
     //change: better to make a class
     await appDb.updateScreen(ScreenCompanion(
       name: drift.Value(widget.nameTimeS),
@@ -202,9 +216,9 @@ class _CardScheduleState extends State<CardSchedule> {
             Text(widget.dateTimeS),
             InkWell(
               onTap: () {
-                setState(() {
-                  updateSwitch();
-                });
+                // setState(() {
+                //   updateSwitch();
+                // });
               },
               child: Container(
                   alignment: Alignment.center,
