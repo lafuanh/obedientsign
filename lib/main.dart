@@ -10,6 +10,7 @@ import 'package:flutter/material.dart' hide MenuItem;
 import 'package:flutter/services.dart';
 import 'package:signtome/service/cities.dart';
 import 'package:signtome/service/schedule_maker.dart';
+import 'package:signtome/service/status_service.dart';
 
 import 'package:timer_builder/timer_builder.dart';
 import 'package:intl/intl.dart';
@@ -20,7 +21,6 @@ import 'package:local_notifier/local_notifier.dart';
 
 import 'package:signtome/screens/about_screen.dart';
 import 'package:signtome/screens/home_screen.dart';
-import 'data/data.dart';
 import 'screens/schedule_screen.dart';
 import 'screens/setting_screen.dart';
 import 'service/notifex.dart';
@@ -39,6 +39,10 @@ home its not work if u change page, maybe u should make own timeBuilder in this 
 */
 
 List<dynamic> citiesList = [];
+Future convertNameCity(code) async {
+  Cities city = await citiesList.where((city) => city.id == code).first;
+  print(city.lokasi);
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -87,7 +91,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-int pageNumber = 1;
+int pageNumber = 3;
 
 class Shell extends StatefulWidget {
   const Shell({super.key});
@@ -112,7 +116,7 @@ class _ShellState extends State<Shell> {
       ));
       await appDb.insertSetting(SettingsCompanion(
         name: drift.Value("settLokasi"),
-        value: drift.Value("1434"),
+        value: drift.Value("KOTA SURAKARTA"),
       ));
       await appDb.insertSetting(SettingsCompanion(
         name: drift.Value("settFormat"),
@@ -124,14 +128,13 @@ class _ShellState extends State<Shell> {
         value: drift.Value("1"),
       ));
 
-      // makeScreenData();
       print("COmplete");
     } else {
-      // appDb.deleteAllSettings();
-      // appDb.deleteAllJadwal();
-      print("Berisi");
-
       // settings table is not empty
+      print("Berisi");
+      // appDb.deleteAllSettings();
+      // appDb.deleteAllSScreen();
+      // appDb.deleteAllJadwal();
     }
   }
 
@@ -144,6 +147,7 @@ class _ShellState extends State<Shell> {
 
     setState(() {
       citiesList = data.map((data) => Cities.fromJson(data)).toList();
+      convertNameCity("1434");
     });
   }
 
@@ -160,8 +164,8 @@ class _ShellState extends State<Shell> {
 
     readJson();
     checkDataExist();
-    printImsakInRow9();
-    makeScreenData();
+    debugMeh();
+    // makeScreenData();
   }
 
   @override
@@ -215,13 +219,11 @@ class _ShellState extends State<Shell> {
     _systemTray.setContextMenu(_menuMain);
   }
 
-  Future<void> printImsakInRow9() async {
+  Future<void> debugMeh() async {
     // Get the JadwalData object for the row with ID 9
-    JadwalData jadwalData = await appDb.getJadwal(30);
+    notifAdzanDhuhur?.show();
 
-    // // Print the value of the "imsak" column
-    print(jadwalData.imsak);
-    print(DateFormat("yyyy-MM-dd").format(jadwalData.tanggalSholat));
+    // print(DateFormat("yyyy-MM-dd").format(jadwalData.tanggalSholat));
   }
 
   @override

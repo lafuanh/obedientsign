@@ -2,8 +2,11 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:dropdown_search/dropdown_search.dart';
+import 'package:intl/intl.dart';
 
 import '../service/cities.dart';
+import '../service/schedule_maker.dart';
+import '../service/status_service.dart';
 import '../widgets/bar_window.dart';
 
 import 'package:signtome/data/local/db/app_db.dart';
@@ -27,37 +30,32 @@ class _SettingScreenState extends State<SettingScreen> {
   int selectedAlarm = 1;
   List<String> lokasiList = [];
 
+  var now = DateTime.now();
+
   Future<void> readSettings() async {
     //change: better to make a class
 
     selectedLanguage = (await appDb.getSetting("settBahasa")).value;
-    final codeLokasi = (await appDb.getSetting("settLokasi")).value;
+    selectedLokasi = (await appDb.getSetting("settLokasi")).value;
     formatWaktu = int.parse((await appDb.getSetting("settFormat")).value);
     selectedAlarm = int.parse((await appDb.getSetting("settAlarm")).value);
 
-    Cities city = await citiesList.where((city) => city.id == codeLokasi).first;
-    selectedLokasi = city.lokasi;
+    // Cities city = await citiesList.where((city) => city.id == codeLokasi).first;
+    // selectedlocation = city.lokasi;
   }
 
   Future<void> savesettings() async {
-    //save sett_ Bahasa
-    //save sett  Lokasi -- lokasi ke CODE LOKASI
-    //save sett tampilan
-    //save sett notifikasi
-    //save sett alarm
+    appDb.deleteAllSettings();
     Cities city =
         await citiesList.where((city) => city.lokasi == selectedLokasi).first;
     final codeLokasi = city.id;
-    appDb.deleteAllSettings();
-
     await appDb.insertSetting(SettingsCompanion(
       name: drift.Value("settBahasa"),
       value: drift.Value(selectedLanguage),
     ));
     await appDb.insertSetting(SettingsCompanion(
       name: drift.Value("settLokasi"),
-      value: drift.Value(
-          codeLokasi), // method to convert from CITY NAME TO CODE NAME
+      value: drift.Value(selectedLokasi),
     ));
     await appDb.insertSetting(SettingsCompanion(
       name: drift.Value("settFormat"),
@@ -66,11 +64,17 @@ class _SettingScreenState extends State<SettingScreen> {
 
     await appDb.insertSetting(SettingsCompanion(
       name: drift.Value("settAlarm"),
-      value: drift.Value(selectedAlarm
-          .toString()), // method to convert from alarm NAME TO CODE
+      value: drift.Value(selectedAlarm.toString()),
     ));
 
-    print("saved");
+    print("Settings debug: saved");
+
+    final monthNow = DateFormat.M().format(now);
+    final yearNow = DateFormat('y').format(now);
+    final dayNow = DateFormat('d').format(now);
+
+    await makeTable(codeLokasi, monthNow, yearNow, int.parse(dayNow));
+    print("Settings debug: screen done");
 
     // getOneMonthJadwal(codeLokasi, "2023", "1");
     //method request API 30 times

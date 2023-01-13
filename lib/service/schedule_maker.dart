@@ -11,14 +11,27 @@ Future<void> makeTable(
   String cityid,
   String monthnow,
   String yearnow,
+  int today,
 ) async {
   // countMonthAPI(monthnow, yearnow);
   int total = await countMonthAPI(monthnow, yearnow);
-  for (int i = 1; i <= total; i++) {
-    await HttpStateful.connectAPI(cityid, monthnow, yearnow, i);
-    print("waiting list $i");
+  int count = await appDb.getSemuaJadwal().then((value) => value.length);
+  if (count == 0) {
+    for (int i = 1; i <= total; i++) {
+      await HttpStateful.connectAPI(cityid, monthnow, yearnow, i);
+      print("waiting list $i");
+    }
+  } else {
+    await appDb.deleteAllJadwal();
+
+    for (int i = 1; i <= total; i++) {
+      await HttpStateful.connectAPI(cityid, monthnow, yearnow, i);
+      print("waiting list $i");
+    }
   }
+
   print("done- ~table schedule $total x");
+  makeScreenData(today);
 }
 
 countMonthAPI(String monthnow, String yearnow) async {
@@ -31,80 +44,149 @@ countMonthAPI(String monthnow, String yearnow) async {
   return int.parse(data.toString());
 }
 
-Future<void> makeScreenData() async {
-  // if (count == 0) {
-  // settings table is empty
-  // insert data into the table
-  // ignore: prefer_const_constructors
+Future<void> makeScreenData(int todayNow) async {
+  int count = await appDb.getSemuaScreen().then((value) => value.length);
+  if (count == 0) {
+    await appDb.insertScreen(ScreenCompanion(
+      id: drift.Value(1),
+      switchNotif: drift.Value(false),
+      name: drift.Value("imsak"),
+      timeClock: drift.Value((await appDb.getJadwal(todayNow))
+          .imsak), //change to table jadwal imsak
+      status: drift.Value("onGoing"), //waiting / complete
+      jadwalId: drift.Value(todayNow), // days now
+    ));
+    await appDb.insertScreen(ScreenCompanion(
+      id: drift.Value(2),
+      switchNotif: drift.Value(false),
+      name: drift.Value("subuh"),
+      timeClock: drift.Value((await appDb.getJadwal(todayNow))
+          .subuh), //change to table jadwal imsak
+      status: drift.Value("waiting"), //waiting / complete
+      jadwalId: drift.Value(todayNow), // days now
+    ));
+    await appDb.insertScreen(ScreenCompanion(
+      id: drift.Value(3),
+      switchNotif: drift.Value(false),
 
-  await appDb.insertScreen(ScreenCompanion(
-    id: drift.Value(1),
-    switchNotif: drift.Value(false),
-    name: drift.Value("imsak"),
-    timeClock: drift.Value(
-        (await appDb.getJadwal(11)).imsak), //change to table jadwal imsak
-    status: drift.Value("waiting"), //waiting / complete
-    // jadwalId: drift.Value(11), // days now
-  ));
-  // await appDb.insertScreen(ScreenCompanion(
-  //   id: drift.Value(2),
-  //   switchNotif: drift.Value(false),
-  //   name: drift.Value("subuh"),
-  //   timeClock: drift.Value(
-  //       (await appDb.getJadwal(11)).subuh), //change to table jadwal imsak
-  //   status: drift.Value("waiting"), //waiting / complete
-  //   jadwalId: drift.Value(11), // days now
-  // ));
-  // await appDb.insertScreen(ScreenCompanion(
-  //   id: drift.Value(3),
-  //   switchNotif: drift.Value(false),
+      name: drift.Value("terbit"),
+      timeClock: drift.Value((await appDb.getJadwal(todayNow))
+          .terbit), //change to table jadwal imsak
+      status: drift.Value("waiting"), //waiting / complete
+      jadwalId: drift.Value(todayNow), // days now
+    ));
+    await appDb.insertScreen(ScreenCompanion(
+      id: drift.Value(4),
+      switchNotif: drift.Value(false),
 
-  //   name: drift.Value("terbit"),
-  //   timeClock: drift.Value(
-  //       (await appDb.getJadwal(11)).terbit), //change to table jadwal imsak
-  //   status: drift.Value("waiting"), //waiting / complete
-  //   jadwalId: drift.Value(11), // days now
-  // ));
-  // await appDb.insertScreen(ScreenCompanion(
-  //   id: drift.Value(4),
-  //   switchNotif: drift.Value(false),
+      name: drift.Value("dhuzur"),
+      timeClock: drift.Value((await appDb.getJadwal(todayNow))
+          .dzuhur), //change to table jadwal imsak
+      status: drift.Value("waiting"), //waiting / complete
+      jadwalId: drift.Value(todayNow), // days now
+    ));
+    await appDb.insertScreen(ScreenCompanion(
+      id: drift.Value(5),
+      switchNotif: drift.Value(false),
 
-  //   name: drift.Value("dhuzur"),
-  //   timeClock: drift.Value(
-  //       (await appDb.getJadwal(11)).dzuhur), //change to table jadwal imsak
-  //   status: drift.Value("waiting"), //waiting / complete
-  //   jadwalId: drift.Value(11), // days now
-  // ));
-  // await appDb.insertScreen(ScreenCompanion(
-  //   id: drift.Value(5),
-  //   switchNotif: drift.Value(false),
+      name: drift.Value("ashar"),
+      timeClock: drift.Value((await appDb.getJadwal(todayNow))
+          .ashar), //change to table jadwal imsak
+      status: drift.Value("waiting"), //waiting / complete
+      jadwalId: drift.Value(todayNow), // days now
+    ));
+    await appDb.insertScreen(ScreenCompanion(
+      id: drift.Value(6),
+      switchNotif: drift.Value(false),
 
-  //   name: drift.Value("ashar"),
-  //   timeClock: drift.Value(
-  //       (await appDb.getJadwal(11)).ashar), //change to table jadwal imsak
-  //   status: drift.Value("waiting"), //waiting / complete
-  //   jadwalId: drift.Value(11), // days now
-  // ));
-  // await appDb.insertScreen(ScreenCompanion(
-  //   id: drift.Value(6),
-  //   switchNotif: drift.Value(false),
+      name: drift.Value("maghrib"),
+      timeClock: drift.Value((await appDb.getJadwal(todayNow))
+          .maghrib), //change to table jadwal imsak
+      status: drift.Value("waiting"), //waiting / complete
+      jadwalId: drift.Value(todayNow), // days now
+    ));
+    await appDb.insertScreen(ScreenCompanion(
+      id: drift.Value(7),
+      switchNotif: drift.Value(false),
+      name: drift.Value("isya"),
+      timeClock: drift.Value((await appDb.getJadwal(todayNow))
+          .isya), //change to table jadwal imsak
+      status: drift.Value("waiting"), //waiting / complete
+      jadwalId: drift.Value(todayNow), // days now
+    ));
+    print("screens stored");
+  } else {
+    await appDb.deleteAllSScreen();
+    await appDb.insertScreen(ScreenCompanion(
+      id: drift.Value(1),
+      switchNotif: drift.Value(false),
+      name: drift.Value("imsak"),
+      timeClock: drift.Value((await appDb.getJadwal(todayNow))
+          .imsak), //change to table jadwal imsak
+      status: drift.Value("onGoing"), //waiting / complete
+      jadwalId: drift.Value(todayNow), // days now
+    ));
+    await appDb.insertScreen(ScreenCompanion(
+      id: drift.Value(2),
+      switchNotif: drift.Value(false),
+      name: drift.Value("subuh"),
+      timeClock: drift.Value((await appDb.getJadwal(todayNow))
+          .subuh), //change to table jadwal imsak
+      status: drift.Value("waiting"), //waiting / complete
+      jadwalId: drift.Value(todayNow), // days now
+    ));
+    await appDb.insertScreen(ScreenCompanion(
+      id: drift.Value(3),
+      switchNotif: drift.Value(false),
 
-  //   name: drift.Value("maghrib"),
-  //   timeClock: drift.Value(
-  //       (await appDb.getJadwal(11)).maghrib), //change to table jadwal imsak
-  //   status: drift.Value("waiting"), //waiting / complete
-  //   jadwalId: drift.Value(11), // days now
-  // ));
-  // await appDb.insertScreen(ScreenCompanion(
-  //   id: drift.Value(7),
-  //   switchNotif: drift.Value(false),
-  //   name: drift.Value("isya"),
-  //   timeClock: drift.Value(
-  //       (await appDb.getJadwal(11)).isya), //change to table jadwal imsak
-  //   status: drift.Value("waiting"), //waiting / complete
-  //   jadwalId: drift.Value(11), // days now
-  // ));
-  print("screens stored");
+      name: drift.Value("terbit"),
+      timeClock: drift.Value((await appDb.getJadwal(todayNow))
+          .terbit), //change to table jadwal imsak
+      status: drift.Value("waiting"), //waiting / complete
+      jadwalId: drift.Value(todayNow), // days now
+    ));
+    await appDb.insertScreen(ScreenCompanion(
+      id: drift.Value(4),
+      switchNotif: drift.Value(false),
+
+      name: drift.Value("dhuzur"),
+      timeClock: drift.Value((await appDb.getJadwal(todayNow))
+          .dzuhur), //change to table jadwal imsak
+      status: drift.Value("waiting"), //waiting / complete
+      jadwalId: drift.Value(todayNow), // days now
+    ));
+    await appDb.insertScreen(ScreenCompanion(
+      id: drift.Value(5),
+      switchNotif: drift.Value(false),
+
+      name: drift.Value("ashar"),
+      timeClock: drift.Value((await appDb.getJadwal(todayNow))
+          .ashar), //change to table jadwal imsak
+      status: drift.Value("waiting"), //waiting / complete
+      jadwalId: drift.Value(todayNow), // days now
+    ));
+    await appDb.insertScreen(ScreenCompanion(
+      id: drift.Value(6),
+      switchNotif: drift.Value(false),
+
+      name: drift.Value("maghrib"),
+      timeClock: drift.Value((await appDb.getJadwal(todayNow))
+          .maghrib), //change to table jadwal imsak
+      status: drift.Value("waiting"), //waiting / complete
+      jadwalId: drift.Value(todayNow), // days now
+    ));
+    await appDb.insertScreen(ScreenCompanion(
+      id: drift.Value(7),
+      switchNotif: drift.Value(false),
+      name: drift.Value("isya"),
+      timeClock: drift.Value((await appDb.getJadwal(todayNow))
+          .isya), //change to table jadwal imsak
+      status: drift.Value("waiting"), //waiting / complete
+      jadwalId: drift.Value(todayNow), // days now
+    ));
+    print("screens alerdy exist"); //just update timeclock
+  }
+
   // } else {
   //   // appDb.deleteAllSettings();
   //   // appDb.deleteAllJadwal();

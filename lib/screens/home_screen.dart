@@ -1,7 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:signtome/data/local/db/app_db.dart';
+import 'package:signtome/screens/setting_screen.dart';
 import 'package:timer_builder/timer_builder.dart';
-
+import 'package:hijri/hijri_calendar.dart';
+import '../main.dart';
 import '../widgets/bar_window.dart';
 
 // import '../widgets/live_clock.dart';
@@ -14,8 +19,41 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String onGoingName = "dhuzur";
+  String ongGoingWaktu = "11:48";
+  String locationNow = "Surakrta";
+  Future<void> checkingData() async {
+    // final codeLocation = (await appDb.getSetting("settLokasi")).value;
+    locationNow = (await appDb.getSetting("settLokasi")).value;
+
+    onGoingName = (await appDb.getStatusScreen("onGoing")).name!;
+    ongGoingWaktu = (await appDb.getStatusScreen("onGoing")).timeClock;
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    checkingData();
+  }
+
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: checkingData(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return updateScreen();
+        } else {
+          return updateScreen();
+        }
+      },
+    );
+    // return updateScreen();
+  }
+
+  Expanded updateScreen() {
     return Expanded(
       child: Container(
         color: Color(0xFF1E1E26),
@@ -33,6 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   var formatTime = DateFormat.Hm().format(now);
                   var formatSec = DateFormat('s').format(now);
                   var formatedDay = DateFormat('EEEEE', 'en_US').format(now);
+                  var _format = HijriCalendar.now();
 
                   return Column(
                     children: [
@@ -47,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       Center(
-                        child: Text(formatedDay),
+                        child: Text(_format.fullDate() + "H"),
                       )
                     ],
                   );
@@ -73,8 +112,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             topLeft: Radius.circular(20.0),
                             topRight: Radius.circular(20.0)),
                       ),
-                      child: const Text(
-                        "Surakarta, Indonesia",
+                      child: Text(
+                        "$locationNow, Indonesia",
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey,
@@ -105,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Dhuzur",
+                              onGoingName,
                               style: TextStyle(
                                 color: Colors.white.withOpacity(0.8),
                                 fontSize: 25,
@@ -113,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                             Text(
-                              "11:34",
+                              ongGoingWaktu,
                               style: TextStyle(
                                 color: Colors.white.withOpacity(0.8),
                                 fontSize: 25,

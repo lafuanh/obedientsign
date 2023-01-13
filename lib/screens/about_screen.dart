@@ -29,8 +29,7 @@ class _AboutmeState extends State<Aboutme> {
             ),
             onPressed: () {
               setState(() {
-                makeTable(
-                    "1434", "1", "2023"); // this how we make table change it
+                // this how we make table change it
               });
             },
             child: const Icon(Icons.save),
