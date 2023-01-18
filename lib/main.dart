@@ -44,6 +44,17 @@ Future convertNameCity(code) async {
   print(city.lokasi);
 }
 
+String onGoingNotif = "04:55";
+String onGoingName = "";
+Future changeNotifTime() async {
+  await checkAllStatusScreen();
+
+  onGoingNotif = (await appDb.getStatusScreen("onGoing")).timeClock;
+  onGoingName = (await appDb.getStatusScreen("onGoing")).name!;
+  print("NOTIF HAS BEEN CHANGED ");
+  print(onGoingNotif);
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await localNotifier.setup(
@@ -164,8 +175,7 @@ class _ShellState extends State<Shell> {
 
     readJson();
     checkDataExist();
-    debugMeh();
-    // makeScreenData();
+    changeNotifTime();
   }
 
   @override
@@ -221,7 +231,8 @@ class _ShellState extends State<Shell> {
 
   Future<void> debugMeh() async {
     // Get the JadwalData object for the row with ID 9
-    notifAdzanDhuhur?.show();
+    // notifAdzanDhuhur?.show();
+    // changeNotifTime();
 
     // print(DateFormat("yyyy-MM-dd").format(jadwalData.tanggalSholat));
   }
@@ -233,23 +244,14 @@ class _ShellState extends State<Shell> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TimerBuilder.periodic(const Duration(seconds: 1), builder: (context) {
+          TimerBuilder.periodic(const Duration(minutes: 1), builder: (context) {
             var now = DateTime.now();
             var formatTime = DateFormat.Hm().format(now);
-            var formatSec = DateFormat('s').format(now);
-            var formatedDay = DateFormat('EEEEE', 'en_US').format(now);
 
-            //show notification
-            if (int.parse(formatSec) == 45) {
-              // int counter = 0;
-              // for (var city in citiesList) {
-              //   if (counter < 2) {
-              //     print(city);
-              //   } else {
-              //     break;
-              //   }
-              //   counter++;
-              // }
+            //show notifikasi
+            if (formatTime == onGoingNotif) {
+              showNotifNow(onGoingName); //it return 2 times idk why
+              changeNotifTime();
             }
 
             return Column();

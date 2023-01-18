@@ -23,7 +23,7 @@ import '../data/local/db/app_db.dart';
 //   }
 // }
 
-Future checkAllStatusScreen() async {
+Future<void> checkAllStatusScreen() async {
   for (int i = 1; i <= 7; i++) {
     String time1 = (await appDb.getidScreen(i)).timeClock;
     DateTime currentTime = DateTime.now();
@@ -46,7 +46,6 @@ Future checkAllStatusScreen() async {
     } else {
       print("$time1 is equals $currentTime. Setting status to waiting");
       await appDb.updateScreenStatusId(i, "complete");
-
       // update your status to waiting here
     }
   }

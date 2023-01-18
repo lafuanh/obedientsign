@@ -5,6 +5,8 @@ import 'package:local_notifier/local_notifier.dart';
 import 'package:signtome/data/data.dart';
 import 'package:tray_manager/tray_manager.dart';
 
+import '../data/local/db/app_db.dart';
+
 class Notifex extends StatefulWidget {
   @override
   _NotifexState createState() => _NotifexState();
@@ -25,11 +27,12 @@ LocalNotification? _exampleNotification = LocalNotification(
   ],
 );
 
+String timeforNow = "";
 LocalNotification? notifAdzanShubuh = LocalNotification(
   //buat notif nya disini 2...
   identifier: 'notif untuk shubuh',
-  title: "Waktu shubuh Telah Tiba",
-  body: waktuSholat.first.namaJadwal, // ??
+  title: "Waktu Shubuh Telah Tiba",
+  body: timeforNow, // ??
   actions: [
     // LocalNotificationAction(
     //   text: 'Yes',
@@ -43,8 +46,8 @@ LocalNotification? notifAdzanShubuh = LocalNotification(
 LocalNotification? notifAdzanDhuhur = LocalNotification(
   //buat notif nya disini 2...
   identifier: 'notif untuk dhuhur',
-  title: "Waktu Dzuhur Telah Tiba",
-  body: "11:30 ",
+  title: "Waktu Dhuhur Telah Tiba",
+  body: timeforNow,
   actions: [
     // LocalNotificationAction(
     //   text: 'Yes',
@@ -56,9 +59,9 @@ LocalNotification? notifAdzanDhuhur = LocalNotification(
 );
 LocalNotification? notifAdzanAshar = LocalNotification(
   //buat notif nya disini 2...
-  identifier: 'notif untuk dhuhur',
-  title: "Waktu Dzuhur Telah Tiba",
-  body: "11:30 ",
+  identifier: 'notif untuk Ashar',
+  title: "Waktu Ashar Telah Tiba",
+  body: timeforNow,
   actions: [
     // LocalNotificationAction(
     //   text: 'Yes',
@@ -71,8 +74,8 @@ LocalNotification? notifAdzanAshar = LocalNotification(
 LocalNotification? notifAdzanMaghrib = LocalNotification(
   //buat notif nya disini 2...
   identifier: 'notif untuk dhuhur',
-  title: "Waktu Dzuhur Telah Tiba",
-  body: "11:30 ",
+  title: "Waktu Maghrib Telah Tiba",
+  body: timeforNow,
   actions: [
     // LocalNotificationAction(
     //   text: 'Yes',
@@ -84,9 +87,9 @@ LocalNotification? notifAdzanMaghrib = LocalNotification(
 );
 LocalNotification? notifAdzanIsya = LocalNotification(
   //buat notif nya disini 2...
-  identifier: 'notif untuk dhuhur',
-  title: "Waktu Dzuhur Telah Tiba",
-  body: "11:30 ",
+  identifier: 'notif untuk Isya',
+  title: "Waktu Isya Telah Tiba",
+  body: timeforNow,
   actions: [
     // LocalNotificationAction(
     //   text: 'Yes',
@@ -96,6 +99,30 @@ LocalNotification? notifAdzanIsya = LocalNotification(
     // ),
   ],
 );
+
+Future showNotifNow(String name) async {
+  timeforNow = (await appDb.getStatusScreen("onGoing")).timeClock;
+
+  switch (name) {
+    case 'shubuh':
+      notifAdzanShubuh?.show();
+      break;
+    case 'dhuhur':
+      notifAdzanDhuhur?.show();
+      break;
+    case 'ashar':
+      notifAdzanAshar?.show();
+      break;
+    case 'maghrib':
+      notifAdzanMaghrib?.show();
+      break;
+    case 'isya':
+      notifAdzanIsya?.show();
+      break;
+    default:
+      print('Invalid prayer time');
+  }
+}
 
 class _NotifexState extends State<Notifex> with TrayListener {
   @override

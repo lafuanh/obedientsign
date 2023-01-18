@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:intl/intl.dart';
 import 'package:signtome/data/local/db/app_db.dart';
 import 'package:signtome/widgets/bar_window.dart';
 
 import 'package:drift/drift.dart' as drift;
+import 'package:timer_builder/timer_builder.dart';
 
 class SchecduleScreen extends StatefulWidget {
   const SchecduleScreen({super.key});
@@ -48,9 +52,10 @@ class _SchecduleScreenState extends State<SchecduleScreen> {
   @override
   void initState() {
     // TODO: implement initState
-
     readScreen();
   }
+
+  String _text = "";
 
   @override
   Widget build(BuildContext context) {
@@ -137,10 +142,61 @@ class _SchecduleScreenState extends State<SchecduleScreen> {
                   width: double.infinity,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text(
-                      "Waktu Dzuhur sudah Terlewat \n 1 jam 40 menit lalu",
-                      textAlign: TextAlign.left,
-                    ),
+                    child: TimerBuilder.periodic(const Duration(minutes: 1),
+                        builder: (context) {
+                      var now = DateTime.now();
+                      var targetTimeString =
+                          "00:00"; //change this to current on going time
+                      var targetTimeArray = targetTimeString.split(':');
+                      var targetTime = DateTime(
+                          now.year,
+                          now.month,
+                          now.day,
+                          int.parse(targetTimeArray[0]),
+                          int.parse(targetTimeArray[1]));
+
+                      // calculate the difference between the current time and the target time
+                      var difference = targetTime.difference(now);
+
+                      Future changeTargetTime() async {
+                        targetTimeString =
+                            (await appDb.getStatusScreen("onGoing")).timeClock;
+                        targetTimeArray = targetTimeString.split(':');
+
+                        targetTime = DateTime(
+                            now.year,
+                            now.month,
+                            now.day,
+                            int.parse(targetTimeArray[0]),
+                            int.parse(targetTimeArray[1]));
+
+                        final aTime = targetTime.difference(now);
+
+                        _text =
+                            "Waktu sholat selanjutnya: \n ${aTime.inHours} jam ${aTime.inMinutes.remainder(60)} menit lagi";
+                      }
+
+                      if (difference.inHours == 0 &&
+                          difference.inMinutes == 0) {
+                        changeTargetTime();
+                      } else if (targetTimeString == "00:00") {
+                        changeTargetTime();
+                      } else {
+                        _text =
+                            "Waktu sholat selanjutnya: \n ${difference.inHours} jam ${difference.inMinutes.remainder(60)} menit lagi";
+                      }
+
+                      // update the text displayed in the Text widget
+
+                      //show notifikasi
+                      //if diffrence inhous == 0 || diffrence .inMinutes == 0
+                      // change targetime
+
+                      return Text(
+                        _text,
+                        textAlign: TextAlign.left,
+                      );
+                    }),
                   ))
             ],
           )),

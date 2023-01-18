@@ -74,10 +74,10 @@ class _SettingScreenState extends State<SettingScreen> {
     final dayNow = DateFormat('d').format(now);
 
     await makeTable(codeLokasi, monthNow, yearNow, int.parse(dayNow));
-    print("Settings debug: screen done");
 
-    // getOneMonthJadwal(codeLokasi, "2023", "1");
-    //method request API 30 times
+    await checkAllStatusScreen();
+
+    await changeNotifTime();
   }
 
   Future<void> readJson() async {
