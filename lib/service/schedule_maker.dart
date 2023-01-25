@@ -31,7 +31,7 @@ Future<void> makeTable(
   }
 
   print("done- ~table schedule $total x");
-  makeScreenData(today);
+  await makeScreenData(today);
 }
 
 countMonthAPI(String monthnow, String yearnow) async {
@@ -184,7 +184,7 @@ Future<void> makeScreenData(int todayNow) async {
       status: drift.Value("waiting"), //waiting / complete
       jadwalId: drift.Value(todayNow), // days now
     ));
-    print("screens alerdy exist"); //just update timeclock
+    // print("screens alerdy exist"); //just update timeclock
   }
 
   // } else {

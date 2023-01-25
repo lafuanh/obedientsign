@@ -8,6 +8,7 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart' hide MenuItem;
 
 import 'package:flutter/services.dart';
+import 'package:signtome/screens/table_screen.dart';
 import 'package:signtome/service/cities.dart';
 import 'package:signtome/service/schedule_maker.dart';
 import 'package:signtome/service/status_service.dart';
@@ -44,7 +45,20 @@ Future convertNameCity(code) async {
   print(city.lokasi);
 }
 
+String onGoingNotif = "04:55";
+String onGoingName = "";
+Future changeNotifTime() async {
+  await checkAllStatusScreen("sameday");
+
+  onGoingNotif = (await appDb.getStatusScreen("onGoing")).timeClock;
+  onGoingName = (await appDb.getStatusScreen("onGoing")).name!;
+  print("NOTIF HAS BEEN CHANGED ");
+  print(onGoingNotif);
+}
+
 void main() async {
+//     rootBundle.load("assets/sqlite3.dll").then((ByteData data) {
+//  });
   WidgetsFlutterBinding.ensureInitialized();
   await localNotifier.setup(
     appName: 'Adzan', //name Notif
@@ -120,21 +134,25 @@ class _ShellState extends State<Shell> {
       ));
       await appDb.insertSetting(SettingsCompanion(
         name: drift.Value("settFormat"),
-        value: drift.Value("1"),
+        value: drift.Value("2"),
       ));
 
       await appDb.insertSetting(SettingsCompanion(
         name: drift.Value("settAlarm"),
-        value: drift.Value("1"),
+        value: drift.Value("2"),
       ));
 
       print("COmplete");
     } else {
       // settings table is not empty
       print("Berisi");
-      // appDb.deleteAllSettings();
-      // appDb.deleteAllSScreen();
-      // appDb.deleteAllJadwal();
+      int countex = await appDb.getSemuaScreen().then((value) => value.length);
+      if (countex != 0) {
+        checkAllStatusScreen("sameday");
+        setState(() {
+          pageNumber = 1;
+        });
+      }
     }
   }
 
@@ -164,8 +182,7 @@ class _ShellState extends State<Shell> {
 
     readJson();
     checkDataExist();
-    debugMeh();
-    // makeScreenData();
+    // changeNotifTime();
   }
 
   @override
@@ -221,7 +238,8 @@ class _ShellState extends State<Shell> {
 
   Future<void> debugMeh() async {
     // Get the JadwalData object for the row with ID 9
-    notifAdzanDhuhur?.show();
+    // notifAdzanDhuhur?.show();
+    // changeNotifTime();
 
     // print(DateFormat("yyyy-MM-dd").format(jadwalData.tanggalSholat));
   }
@@ -233,23 +251,14 @@ class _ShellState extends State<Shell> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TimerBuilder.periodic(const Duration(seconds: 1), builder: (context) {
+          TimerBuilder.periodic(const Duration(minutes: 1), builder: (context) {
             var now = DateTime.now();
             var formatTime = DateFormat.Hm().format(now);
-            var formatSec = DateFormat('s').format(now);
-            var formatedDay = DateFormat('EEEEE', 'en_US').format(now);
 
-            //show notification
-            if (int.parse(formatSec) == 45) {
-              // int counter = 0;
-              // for (var city in citiesList) {
-              //   if (counter < 2) {
-              //     print(city);
-              //   } else {
-              //     break;
-              //   }
-              //   counter++;
-              // }
+            //show notifikasi
+            if (formatTime == onGoingNotif) {
+              showNotifNow(onGoingName); //it return 2 times idk why
+              changeNotifTime();
             }
 
             return Column();
@@ -319,6 +328,8 @@ class _ShellState extends State<Shell> {
     } else if (pageNumber == 4) {
       //change to : aboutme()
       return Aboutme();
+    } else if (pageNumber == 5) {
+      return TableBulan();
     }
   }
 }
