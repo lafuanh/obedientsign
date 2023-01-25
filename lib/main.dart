@@ -148,7 +148,7 @@ class _ShellState extends State<Shell> {
       print("Berisi");
       int countex = await appDb.getSemuaScreen().then((value) => value.length);
       if (countex != 0) {
-        checkAllStatusScreen("sameday");
+        changeNotifTime();
         setState(() {
           pageNumber = 1;
         });
@@ -251,7 +251,7 @@ class _ShellState extends State<Shell> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TimerBuilder.periodic(const Duration(minutes: 1), builder: (context) {
+          TimerBuilder.periodic(Duration(minutes: 1), builder: (context) {
             var now = DateTime.now();
             var formatTime = DateFormat.Hm().format(now);
 

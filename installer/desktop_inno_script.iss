@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "signtome"
-#define MyAppVersion "1.0"
+#define MyAppVersion "1.3"
 #define MyAppPublisher "12 RPL A, student"
 #define MyAppURL "https://www.livermoon.net/"
 #define MyAppExeName "signtome.exe"
