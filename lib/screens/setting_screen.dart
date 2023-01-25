@@ -45,7 +45,9 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   Future<void> savesettings() async {
+    final dataLoc = (await appDb.getSetting("settLokasi")).value;
     appDb.deleteAllSettings();
+
     Cities city =
         await citiesList.where((city) => city.lokasi == selectedLokasi).first;
     final codeLokasi = city.id;
@@ -67,17 +69,17 @@ class _SettingScreenState extends State<SettingScreen> {
       value: drift.Value(selectedAlarm.toString()),
     ));
 
-    print("Settings debug: saved");
-
     final monthNow = DateFormat.M().format(now);
     final yearNow = DateFormat('y').format(now);
     final dayNow = DateFormat('d').format(now);
+    if (dataLoc != selectedLokasi) {
+      await makeTable(codeLokasi, monthNow, yearNow, int.parse(dayNow));
 
-    await makeTable(codeLokasi, monthNow, yearNow, int.parse(dayNow));
+      await checkAllStatusScreen("sameday");
 
-    await checkAllStatusScreen();
-
-    await changeNotifTime();
+      await changeNotifTime();
+    }
+    print("Settings debug: saved");
   }
 
   Future<void> readJson() async {
@@ -352,12 +354,25 @@ class _SettingScreenState extends State<SettingScreen> {
                                     Radius.circular(8),
                                   ),
                                 ),
-                                onPressed: () {
-                                  savesettings();
-                                  // set list of settings in database where language with a code of city based on citiesList
-                                  // then insert 30 times table of schedule
-                                  // then returnif ready
-                                  // Handle the button press
+                                onPressed: () async {
+                                  showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            CircularProgressIndicator(),
+                                            SizedBox(height: 10),
+                                            Text("Loading..."),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  );
+                                  await savesettings();
+                                  Navigator.of(context).pop();
                                 },
                                 child: const Icon(Icons.save),
                               ),

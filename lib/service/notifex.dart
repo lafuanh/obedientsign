@@ -107,7 +107,7 @@ Future showNotifNow(String name) async {
     case 'shubuh':
       notifAdzanShubuh?.show();
       break;
-    case 'dhuhur':
+    case 'dhuzur':
       notifAdzanDhuhur?.show();
       break;
     case 'ashar':

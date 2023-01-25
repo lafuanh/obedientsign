@@ -27,9 +27,48 @@ class _AboutmeState extends State<Aboutme> {
                 child: SingleChildScrollView(
                     child: Column(children: [
                   Text(
-                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede. Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aliquam nibh. Mauris ac mauris sed pede pellentesque fermentum. Maecenas adipiscing ante non diam sodales hendrerit."),
+                    "Selamat datang di halaman Tentang SignTome, sebuah aplikasi yang mengingatkan kamu untuk sholat.",
+                    style: TextStyle(fontSize: 14),
+                  ),
+                  SizedBox(height: 16),
                   Text(
-                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede. Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aliquam nibh. Mauris ac mauris sed pede pellentesque fermentum. Maecenas adipiscing ante non diam sodales hendrerit."),
+                    "Deskripsi",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "SignTome dirancang untuk memudahkan kamu dalam mengingat sholat harianmu.",
+                    style: TextStyle(fontSize: 14),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    "Cara Menggunakan",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "Untuk memulai, hal pertama yang harus kamu lakukan adalah mengatur lokasimu di halaman pengaturan. Hal ini penting karena jadwal sholat didasarkan pada lokasimu. Setelah mengatur lokasi, kamu dapat menyesuaikan pengaturan lain seperti format waktu, bahasa, dan suara notifikasi (adzan atau tanpa adzan) di halaman pengaturan.",
+                    style: TextStyle(fontSize: 14),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Text(
+                      "Di halaman utama, kamu dapat melihat waktu dan tanggal saat ini, serta jadwal sholat berikutnya. Halaman jadwal menunjukkan jadwal sholat untuk hari ini.",
+                      style: TextStyle(fontSize: 14),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    "Penyesuaian",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
+                  SizedBox(height: 8),
+                  // ignore: prefer_const_constructors
+                  Text(
+                    "Di halaman pengaturan, kamu dapat menyesuaikan pengaturan notifikasimu lebih lanjut. Kamu dapat memilih untuk menerima pengingat untuk setiap sholat atau mematikan notifikasi sama sekali.\n\nDengan menggunakan SignTome, kamu dapat memastikan bahwa kamu tidak pernah melewatkan sholat lagi. Aplikasi ini mudah digunakan dan dapat disesuaikan dengan kebutuhanmu, sehingga menjadi teman yang sempurna untuk perjalanan spiritualmu.",
+                    style: TextStyle(fontSize: 14),
+                  ),
+                  SizedBox(height: 16),
                   Padding(
                     padding: const EdgeInsets.only(top: 16.0, left: 25),
                     child: FloatingActionButton(
@@ -41,7 +80,7 @@ class _AboutmeState extends State<Aboutme> {
                       ),
                       onPressed: () {
                         setState(() {
-                          showNotifNow("dhuhur");
+                          showNotifNow("dhuzur");
                         });
                       },
                       child: const Icon(Icons.save),

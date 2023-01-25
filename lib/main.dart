@@ -8,6 +8,7 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart' hide MenuItem;
 
 import 'package:flutter/services.dart';
+import 'package:signtome/screens/table_screen.dart';
 import 'package:signtome/service/cities.dart';
 import 'package:signtome/service/schedule_maker.dart';
 import 'package:signtome/service/status_service.dart';
@@ -47,7 +48,7 @@ Future convertNameCity(code) async {
 String onGoingNotif = "04:55";
 String onGoingName = "";
 Future changeNotifTime() async {
-  await checkAllStatusScreen();
+  await checkAllStatusScreen("sameday");
 
   onGoingNotif = (await appDb.getStatusScreen("onGoing")).timeClock;
   onGoingName = (await appDb.getStatusScreen("onGoing")).name!;
@@ -56,6 +57,8 @@ Future changeNotifTime() async {
 }
 
 void main() async {
+//     rootBundle.load("assets/sqlite3.dll").then((ByteData data) {
+//  });
   WidgetsFlutterBinding.ensureInitialized();
   await localNotifier.setup(
     appName: 'Adzan', //name Notif
@@ -131,21 +134,25 @@ class _ShellState extends State<Shell> {
       ));
       await appDb.insertSetting(SettingsCompanion(
         name: drift.Value("settFormat"),
-        value: drift.Value("1"),
+        value: drift.Value("2"),
       ));
 
       await appDb.insertSetting(SettingsCompanion(
         name: drift.Value("settAlarm"),
-        value: drift.Value("1"),
+        value: drift.Value("2"),
       ));
 
       print("COmplete");
     } else {
       // settings table is not empty
       print("Berisi");
-      // appDb.deleteAllSettings();
-      // appDb.deleteAllSScreen();
-      // appDb.deleteAllJadwal();
+      int countex = await appDb.getSemuaScreen().then((value) => value.length);
+      if (countex != 0) {
+        checkAllStatusScreen("sameday");
+        setState(() {
+          pageNumber = 1;
+        });
+      }
     }
   }
 
@@ -175,7 +182,7 @@ class _ShellState extends State<Shell> {
 
     readJson();
     checkDataExist();
-    changeNotifTime();
+    // changeNotifTime();
   }
 
   @override
@@ -321,6 +328,8 @@ class _ShellState extends State<Shell> {
     } else if (pageNumber == 4) {
       //change to : aboutme()
       return Aboutme();
+    } else if (pageNumber == 5) {
+      return TableBulan();
     }
   }
 }
